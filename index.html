@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Freelancer Assessment — 24人完整评估</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial,
+      "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa;
+    color: #1e293b;
+    line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    color: white;
+    padding: 22px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  header h1 { margin: 0 0 4px 0; font-size: 22px; font-weight: 600; }
+  header .subtitle { opacity: 0.85; font-size: 12.5px; }
+  header .rubric-btn {
+    background: rgba(255,255,255,0.18); color: white; border: 1px solid rgba(255,255,255,0.3);
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap; font-family: inherit;
+    transition: background 0.15s;
+  }
+  header .rubric-btn:hover { background: rgba(255,255,255,0.28); }
+  .container { max-width: 1440px; margin: 0 auto; padding: 24px 32px 80px; }
+
+  /* HERO avg card */
+  .hero-row {
+    display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 12px; margin-bottom: 20px;
+  }
+  @media (max-width: 1100px) {
+    .hero-row { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .hero-row .hero { grid-column: span 4; }
+  }
+  .hero {
+    background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);
+    color: white; border-radius: 12px; padding: 18px 22px;
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    position: relative; overflow: hidden;
+  }
+  .hero .label { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+  .hero .big {
+    font-size: 48px; font-weight: 800; line-height: 1;
+    margin-top: 2px;
+  }
+  .hero .big .suf { font-size: 18px; opacity: 0.7; font-weight: 500; margin-left: 4px; }
+  .hero .track {
+    height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden;
+    margin: 6px 0 2px;
+  }
+  .hero .track .fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #fbbf24, #a7f3d0);
+  }
+  .hero .meta {
+    font-size: 12px; opacity: 0.88;
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  .hero .meta b { font-weight: 600; color: #fde68a; }
+
+  /* small KPIs */
+  .kpi {
+    background: white; border-radius: 10px; padding: 14px 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border-top: 3px solid #cbd5e1;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .kpi .num { font-size: 24px; font-weight: 700; color: #1e293b; }
+  .kpi .lbl { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .kpi.top { border-top-color: #2563eb; }
+  .kpi.reliable { border-top-color: #059669; }
+  .kpi.risk { border-top-color: #dc2626; }
+  .kpi.coaching { border-top-color: #f59e0b; }
+  .kpi.promising { border-top-color: #eab308; }
+  .kpi.new { border-top-color: #64748b; }
+
+  /* Filter bar */
+  .filters {
+    background: white; border-radius: 10px; padding: 14px 16px;
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .filters input[type=text], .filters select {
+    padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 13px; font-family: inherit; background: white;
+  }
+  .filters input[type=text] { min-width: 220px; }
+  .filters label { font-size: 12px; color: #475569; }
+  .filters .count { margin-left: auto; color: #64748b; font-size: 13px; }
+
+  /* Grid of cards — 3 per row, one group per row */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: white; border-radius: 10px; padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    cursor: pointer; transition: all 0.15s;
+    border: 1px solid transparent;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); border-color: #cbd5e1; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .card-name { font-weight: 600; font-size: 15px; color: #0f172a; line-height: 1.2; }
+  .card-group {
+    font-size: 11px; color: #334155; font-weight: 700;
+    background: #e0e7ff; padding: 3px 8px; border-radius: 10px;
+  }
+  .card-label { font-size: 12px; color: #334155; margin: 3px 0 0 0; }
+  .card-body { display: flex; gap: 14px; align-items: center; }
+
+  /* AVG circle on card */
+  .avg-circle {
+    flex-shrink: 0; width: 74px; height: 74px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 3px solid;
+    font-weight: 700;
+  }
+  .avg-val { font-size: 21px; line-height: 1; }
+  .avg-unit { font-size: 10px; opacity: 0.6; font-weight: 500; margin-top: 1px; }
+
+  /* Dimension grid inside card — DOT-based progress bars */
+  .dims {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    column-gap: 14px; row-gap: 6px; font-size: 11px;
+    min-width: 0;
+  }
+  .dim-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .dim-name {
+    flex-shrink: 0; color: #475569; width: 42px;
+    font-weight: 500;
+  }
+  .dim-dots { display: flex; gap: 1.5px; flex: 1; min-width: 0; }
+  .dot {
+    flex: 1; height: 9px; background: #e5e7eb; border-radius: 2px;
+    min-width: 0;
+  }
+  .dim-val {
+    flex-shrink: 0; font-weight: 700; font-size: 11px;
+    width: 20px; text-align: right; color: #0f172a;
+  }
+  .dim-val.na { color: #94a3b8; font-weight: 500; font-size: 10px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip {
+    font-size: 11px; padding: 2px 8px; border-radius: 12px;
+    font-weight: 500; white-space: nowrap;
+  }
+  .chip-risk-Low { background: #d1fae5; color: #065f46; }
+  .chip-risk-Medium { background: #fef3c7; color: #92400e; }
+  .chip-risk-High { background: #fee2e2; color: #991b1b; }
+  .chip-risk-Unknown { background: #dbeafe; color: #1e40af; }
+  .chip-tenure { background: #f1f5f9; color: #475569; }
+
+  /* Modal / detail drawer */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
+    display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: 12px; max-width: 920px; width: 100%;
+    max-height: 92vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-head {
+    padding: 20px 28px; border-bottom: 1px solid #e2e8f0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    position: sticky; top: 0; background: white; z-index: 2;
+  }
+  .modal-head h2 { margin: 0; font-size: 22px; color: #0f172a; }
+  .modal-head .close-btn {
+    background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b;
+    padding: 0 4px; line-height: 1;
+  }
+  .modal-head .close-btn:hover { color: #0f172a; }
+  .modal-body { padding: 20px 28px 28px; }
+
+  .section-title {
+    font-size: 13px; font-weight: 600; color: #1e3a8a;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 22px 0 10px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 6px; }
+  .metric {
+    background: #f8fafc; border-radius: 6px; padding: 8px 10px;
+    border-left: 3px solid #2563eb;
+  }
+  .metric .k { font-size: 10px; color: #64748b; text-transform: uppercase; }
+  .metric .v { font-weight: 600; font-size: 15px; color: #0f172a; }
+
+  /* Modal score rows use dots too */
+  .score-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .score-row {
+    display: flex; align-items: center; gap: 12px;
+    background: #f8fafc; padding: 10px 14px; border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .score-row .name { flex: 1; font-size: 13px; font-weight: 500; }
+  .score-row .dots { display: flex; gap: 2px; flex-shrink: 0; }
+  .score-row .dots .dot { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+  .score-row .val {
+    font-weight: 700; font-size: 14px; min-width: 54px; text-align: right;
+    flex-shrink: 0;
+  }
+  .score-row .val .unit { font-size: 11px; color: #64748b; font-weight: 500; }
+
+  ul.bullets { margin: 0; padding-left: 20px; }
+  ul.bullets li { margin-bottom: 6px; font-size: 13.5px; line-height: 1.55; }
+  ul.bullets.strengths li::marker { color: #059669; }
+  ul.bullets.concerns li::marker { color: #dc2626; }
+
+  .narrative {
+    background: #f8fafc; padding: 12px 14px; border-radius: 6px;
+    border-left: 3px solid #2563eb; font-size: 13.5px; line-height: 1.6;
+  }
+
+  .quote {
+    margin: 8px 0; padding: 10px 14px;
+    background: #fffbeb; border-left: 3px solid #f59e0b;
+    border-radius: 4px;
+  }
+  .quote .ctx { font-size: 11px; color: #92400e; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; margin-bottom: 2px; }
+  .quote .text { font-style: italic; color: #1e293b; font-size: 13.5px; }
+
+  .recommendation {
+    background: #eff6ff; border-radius: 8px; padding: 14px 16px;
+    border-left: 4px solid #2563eb; font-weight: 500; font-size: 14px;
+    color: #0f172a;
+  }
+
+  /* Rubric modal specific */
+  .rubric-section {
+    margin-bottom: 20px; padding: 14px 16px;
+    background: #f8fafc; border-radius: 8px; border-left: 4px solid #2563eb;
+  }
+  .rubric-title { font-weight: 700; font-size: 15px; color: #0f172a; margin-bottom: 3px; }
+  .rubric-def { font-size: 12.5px; color: #64748b; margin-bottom: 10px; }
+  .rubric-levels { display: flex; flex-direction: column; gap: 4px; }
+  .rubric-level {
+    display: flex; align-items: center; gap: 12px;
+    padding: 6px 10px; background: white; border-radius: 6px;
+    font-size: 13px;
+  }
+  .rubric-level .score-chip {
+    font-weight: 700; min-width: 42px; text-align: center;
+    padding: 3px 8px; border-radius: 4px; font-size: 12px;
+  }
+  .rubric-level .desc { flex: 1; color: #334155; }
+
+  /* Score color classes — mapped by original 1-5 scale */
+  .s-1 { color: #991b1b; border-color: #dc2626; background: #fee2e2; }
+  .s-2 { color: #92400e; border-color: #f59e0b; background: #fef3c7; }
+  .s-3 { color: #854d0e; border-color: #eab308; background: #fef9c3; }
+  .s-4 { color: #166534; border-color: #84cc16; background: #ecfccb; }
+  .s-5 { color: #065f46; border-color: #10b981; background: #d1fae5; }
+  .s-0 { color: #64748b; border-color: #94a3b8; background: #f1f5f9; }
+
+  .fill-1 { background: #dc2626; }
+  .fill-2 { background: #f59e0b; }
+  .fill-3 { background: #eab308; }
+  .fill-4 { background: #84cc16; }
+  .fill-5 { background: #10b981; }
+
+  .empty { text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
+
+  footer { max-width: 1440px; margin: 0 auto; padding: 16px 32px; color: #64748b; font-size: 11px; border-top: 1px solid #e2e8f0; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Freelancer Assessment — 24 人完整评估</h1>
+    <div class="subtitle">数据来源: WhatsApp 群聊 (Apr 6 – Apr 23, 2026) · 8 维度 · 10分制 · 点击卡片看完整画像</div>
+  </div>
+  <button class="rubric-btn" onclick="openRubric()">📖 评分标准</button>
+</header>
+
+<div class="container">
+  <!-- Hero + KPIs in one row -->
+  <div class="hero-row">
+    <div class="hero">
+      <div class="label">全团队综合均分</div>
+      <div class="big">7.4<span class="suf">/ 10</span></div>
+      <div class="track"><div class="fill" style="width: 74.0%"></div></div>
+      <div class="meta">
+        <span>24 人参与评分</span>
+        <span>最高 <b>9.8/10 (Alve)</b></span>
+        <span>最低 <b>4.5/10 (Tahmina)</b></span>
+      </div>
+    </div>
+    <div class="kpi"><div class="num">24</div><div class="lbl">总人数</div></div>
+    <div class="kpi top"><div class="num">2</div><div class="lbl">⭐ Top</div></div>
+    <div class="kpi reliable"><div class="num">13</div><div class="lbl">✅ Reliable</div></div>
+    <div class="kpi promising"><div class="num">4</div><div class="lbl">🟡 Promising</div></div>
+    <div class="kpi coaching"><div class="num">1</div><div class="lbl">🟠 Coaching</div></div>
+    <div class="kpi risk"><div class="num">1</div><div class="lbl">🔴 At Risk</div></div>
+    <div class="kpi new"><div class="num">3</div><div class="lbl">🆕 New</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <input id="search" type="text" placeholder="🔍 搜索名字 / 关键词..." />
+    <label>组:</label>
+    <select id="f-group">
+      <option value="">全部</option>
+      <option>G1</option><option>G2</option><option>G3</option><option>G4</option>
+      <option>G5</option><option>G6</option><option>G7</option><option>G8</option>
+    </select>
+    <label>风险:</label>
+    <select id="f-risk">
+      <option value="">全部</option>
+      <option>High</option><option>Medium</option><option>Low</option><option>Unknown</option>
+    </select>
+    <label>标签:</label>
+    <select id="f-label">
+      <option value="">全部</option>
+      <option>⭐ Top Performer</option>
+      <option>✅ Reliable Mid-Senior</option>
+      <option>🟡 Promising but Constrained</option>
+      <option>🟠 Needs Coaching</option>
+      <option>🔴 At Risk</option>
+      <option>🆕 Too Early (Baseline)</option>
+    </select>
+    <label>排序:</label>
+    <select id="sort">
+      <option value="group">按组</option>
+      <option value="score-desc">总分 高→低</option>
+      <option value="score-asc">总分 低→高</option>
+      <option value="risk">按风险</option>
+      <option value="name">按姓名</option>
+    </select>
+    <span class="count" id="count"></span>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- Detail modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="m-name"></h2>
+        <div id="m-sub" style="font-size: 13px; color: #64748b; margin-top: 4px;"></div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="m-body"></div>
+  </div>
+</div>
+
+<!-- Rubric modal -->
+<div class="overlay" id="rubric-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>📖 评分标准</h2>
+        <div style="font-size: 13px; color: #64748b; margin-top: 4px;">8 个维度的打分锚点。评估时统一对照,减少PM间的主观差异。显示为10分制(底层rubric为1-5原始值×2)。</div>
+      </div>
+      <button class="close-btn" onclick="closeRubric()">✕</button>
+    </div>
+    <div class="modal-body" id="rubric-body"></div>
+  </div>
+</div>
+
+<footer>
+  数据窗口: 2026-04-06 至 2026-04-23 · 生成时间: 2026-04-23 21:00 · 评分为1-5原始×2显示为10分制 · 质量/产出维度待与平台数据合并后二次校准
+</footer>
+
+<script>
+const DATA = [{"folder": "G1 Arreha_annotator", "display_name": "Arreha (G1)", "background": "Pakistan-based; onboarded Apr 23, 2026. First day on the job with enthusiastic engagement.", "label": "🆕 Too Early (Baseline)", "recommendation": "Monitor closely over next 7 days. Early signs are positive (fast responsiveness, clear questions with screenshots, polite tone). Ensure first batch completion by deadline and assess quality before scaling.", "risk_level": "Unknown", "scores": {"Productivity": null, "Quality": null, "Responsiveness": 4, "Communication": 4, "Reliability": null, "Initiative": 3, "Learning curve": null, "Attitude": 5}, "strengths": ["Fast responder: median 24 min, 67% reply within hours on first day", "Asks targeted, screenshot-backed clarification questions (text-on-objects, split-screen edge cases)", "Polite and enthusiastic tone from onboarding onwards ('excited to work with you all')", "Engages proactively with guidelines — asks about specific annotation rules rather than generic questions", "Shows willingness to learn by accepting PM corrections and adjusting mental model"], "concerns": ["Only 1 day tenure — insufficient data on productivity, quality, and reliability metrics", "First task (500 videos, VE) has 9pm UTC+8 deadline (Apr 23) — completion unknown at cutoff", "No evidence yet of sustained output or consistency across multiple days"], "learning_curve": "Too early to assess. Day 1 pattern shows good receptiveness to feedback on edge cases (split-screen, text visibility). Will have clear signal by end of week 1.", "comm_style": "Polite and professional; asks clarifying questions with visual evidence. Concise messages with gratitude.", "quotes": [["Onboarding enthusiasm", "Hi @all Areeha here Thank you And excited to work with you all"], ["Detail-oriented question 1", "If a text is written on an object, will it be considered as a text in video for example, the word Samsung is written on a mic"], ["Detail-oriented question 2", "scenes like these two videos on the same screen Will both scenes be judged in a split screen news type videos"], ["Receptiveness to feedback", "I have already labelled it as missed due to just dance"]], "_group": "G1", "_group_num": 1, "_first_name": "Arreha", "_metrics": {"freelancer_name": "G1 Arreha", "first_message_date": "2026-04-23", "last_message_date": "2026-04-23", "tenure_days": 1, "total_messages": 25, "freelancer_messages": 10, "pm_messages": 15, "freelancer_active_days": 1, "active_day_rate": 1.0, "avg_response_min": 38.2, "median_response_min": 24.0, "response_samples": 15, "fast_reply_pct": 67.0, "slow_reply_count_over_2h": 0, "fl_questions_asked": 1, "fl_attachments": 0, "apologies": 0, "thanks": 3, "acknowledgments": 3, "avg_msg_length": 63.8, "weekend_msgs": 0, "most_active_hour": 17, "week1_messages": 10, "week1_questions": 1, "later_messages": 0, "later_questions": 0}, "_avg": 4.0, "_avg10": 8.0}, {"folder": "G1 Fiza_annotator", "display_name": "Fiza (G1)", "background": "Pakistan-based; 17 days tenure (Apr 7–23). Assigned Caption Verification, Video Quality, Scene Cut, and Video Extraction tasks.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and continue current trajectory. Strong delivery and responsiveness, but watch efficiency on novel task types (Scene Cut annotation was slow). Provide targeted coaching on keyboard shortcuts and workflow optimization.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 4, "Responsiveness": 4, "Communication": 3, "Reliability": 3, "Initiative": 3, "Learning curve": 4, "Attitude": 4}, "strengths": ["Consistent on-time and early delivery: completed Caption Verification (Apr 8–9) ahead of schedule, accepted bonus Scene Cut task (Apr 18–19) with confidence", "Fast, responsive: median 12.7 min, 68% fast reply rate across 17 days", "Team player: accepted deadline extension gracefully (Apr 15, extended 9pm), communicated health blocker proactively (Apr 20: 'not feeling well')", "Quality improving: explicitly praised on CV results ('look good'), improved on VQ feedback (Border Scene Cut clarification accepted)", "Handles platform issues well: reported 2 non-loading videos (Apr 23 #1268, #1369), skipped as advised"], "concerns": ["Slow on new task types: Scene Cut annotation took 3 hours per 100 videos (Apr 20), significantly below team pace; had to deprioritize for higher-priority VQ task", "Occasional late-hour deadline crunches: Apr 8 took until 9:52pm (deadline 7pm); Apr 15 requested extension; Apr 20 extended to 10am, still at risk", "Limited follow-up initiative: mostly responds to direct PM questions; doesn't proactively ask clarifying questions or flag ambiguous guideline sections", "Communication could be more detailed: replies often minimal ('Okay', 'Got it'); doesn't include video IDs or screenshots unprompted"], "learning_curve": "Steady improvement. Week 1: slow start on CV (reminded at 14:11), adjusted pace, finished. Week 2: VQ feedback on Border Scene Cut absorbed; applies it. Week 2.5: Scene Cut proved challenging—accepted PM pivot to prioritize VQ. By Week 2 end, handling rapid task-type switching with adaptability.", "comm_style": "Polite, concise, transactional. Responsive to direct feedback. Doesn't volunteer context unless asked. Gratitude is common.", "quotes": [["Proactive health blocker (Apr 20)", "Just not feeling well since yesterday, that slowed me down. Will work on the efficiency"], ["Accepting deadline extension (Apr 15)", "Okay, I'll try my best to complete by 9 PM UTC+8"], ["Reporting task difficulty (Apr 20)", "There were a lot of scene cuts in annotations that is why it is taking some time"], ["Finishing strong (Apr 23)", "okay, thanks"]], "_group": "G1", "_group_num": 1, "_first_name": "Fiza", "_metrics": {"freelancer_name": "G1 Fiza", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 106, "freelancer_messages": 46, "pm_messages": 60, "freelancer_active_days": 15, "active_day_rate": 0.88, "avg_response_min": 44.3, "median_response_min": 12.7, "response_samples": 53, "fast_reply_pct": 68.0, "slow_reply_count_over_2h": 7, "fl_questions_asked": 5, "fl_attachments": 2, "apologies": 1, "thanks": 5, "acknowledgments": 29, "avg_msg_length": 34.0, "weekend_msgs": 7, "most_active_hour": 14, "week1_messages": 24, "week1_questions": 2, "later_messages": 22, "later_questions": 3}, "_avg": 3.62, "_avg10": 7.2}, {"folder": "G1 Mao_annotator", "display_name": "Mao (G1)", "background": "Indonesia-based; 17 days tenure (Apr 7–23). Assigned Caption Verification, Duplicate Frame Detection, Video Quality, and Video Extraction tasks. Most communicative in group (126 messages).", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and support. Top communicator with strong work ethic, proactive troubleshooting, and quality-conscious approach. Help with platform resilience — experienced multiple system bugs. Channel initiative into peer coaching.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 4, "Responsiveness": 5, "Communication": 5, "Reliability": 4, "Initiative": 5, "Learning curve": 4, "Attitude": 5}, "strengths": ["Exceptional responsiveness: median 2.5 min, 90% fast reply rate — fastest in group; never leaves PM waiting", "Proactive communicator: asks detailed questions with video IDs, screenshots, and reasoning (e.g., Apr 14 overlay clarification, Apr 20 camera motion query)", "Deep engagement with guidelines: repeatedly asks clarifying questions on edge cases (subtle actions in gestures, static image vs. duplicate frame, left/right hand orientation)", "Resilience under technical stress: debugged player issues (Apr 10 frame-by-frame detection logic), platform save failures (Apr 21 lost 70 tasks, reported with video numbers), offered problem-solving input", "Quality-conscious: prioritizes accuracy over speed; requests deadline extensions to maintain quality (Apr 11, 18:52); proactively reviews feedback docs", "Consistently hits or exceeds targets: completed DF tasks on time (Apr 9 completed with thanks; Apr 10 restarted after fix), VQ at 1000+ pace"], "concerns": ["Heavy workload tolerance may mask burnout: 126 messages in 17 days, works late (most active hour 22:00), took only one weekend break (Apr 18)", "Platform-dependent: experienced save losses, video load errors, player frame-by-frame lag; required multiple deadline extensions due to bugs (Apr 10, Apr 21)", "Learning curve shows initial guideline complexity: Week 1 had many edge-case questions on CV (subtle actions, gestures); by Week 2 reduced but still present on VQ", "Prioritizes accuracy over efficiency: Scene Cut (bonus task Apr 22) initially declined to finish due to time constraints; only agreed to finish first 100 of 500 for bonus"], "learning_curve": "Strong upward. Week 1: many clarifying questions on CV edge cases (Apr 8 subtle actions, Apr 9 invalid videos); shows understanding by next day. Week 2: fewer questions, more confident on VQ; by Apr 14 explicitly praised for progress (Dini: 'Great job! Keep up the pace'). Week 2.5: adapts to rapid task switches (DF→VQ→VE) and platform issues without regression.", "comm_style": "Professional, detailed, humble. Includes video IDs, screenshots, and reasoning in questions. High engagement with feedback. Expresses gratitude frequently (47 thanks). Warm tone with occasional informal touches.", "quotes": [["Detailed troubleshooting (Apr 10)", "The video player uses the slow playback, not normal playback, so it is difficult to check for duplicate frames by arrow key"], ["Quality-first priority (Apr 11)", "My current pace is about 15 tasks per hour, and I want to make sure I can complete everything accurately"], ["Proactive bug reporting (Apr 21)", "I completed around 70 tasks in the last hours, but none of them were saved. Could you please check it?"], ["Reflection on workflow (Apr 11)", "Because there are two versions of each video, I often have to go back and forth between them. Sometimes I only realize that something was missed in the first video after checking the second one"], ["Graceful task negotiation (Apr 22)", "for the task 260420-VQ-7K, you can assign it to someone else. I don't think I'll be able to finish it on time"]], "_group": "G1", "_group_num": 1, "_first_name": "Mao", "_metrics": {"freelancer_name": "G1 Mao", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 241, "freelancer_messages": 126, "pm_messages": 115, "freelancer_active_days": 15, "active_day_rate": 0.88, "avg_response_min": 33.0, "median_response_min": 2.5, "response_samples": 113, "fast_reply_pct": 90.0, "slow_reply_count_over_2h": 8, "fl_questions_asked": 25, "fl_attachments": 9, "apologies": 0, "thanks": 47, "acknowledgments": 41, "avg_msg_length": 49.3, "weekend_msgs": 15, "most_active_hour": 14, "week1_messages": 78, "week1_questions": 17, "later_messages": 48, "later_questions": 8}, "_avg": 4.5, "_avg10": 9.0}, {"folder": "G2 Ariel_annotator", "display_name": "Ariel (G2)", "background": "17天任期(Apr 7–23)。PM反馈:平时按时甚至提前完成任务,只是极少在群里说话 — 典型的'沉默型可靠交付者'。聊天记录只能看见2条消息,但她在平台上的实际交付是稳定的。", "label": "✅ Reliable Mid-Senior", "recommendation": "保留,不需要特殊行动。Ariel属于低维护、沉默高产类型,PM反馈她按时甚至提前交付。适合派不需要频繁沟通的任务。建议:每周被动check-in一次,确认她没遇到未上报的问题;重要通知(平台维护/guideline更新)单独点名@她,避免被群消息淹没。", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": null, "Responsiveness": 2, "Communication": 2, "Reliability": 5, "Initiative": 2, "Learning curve": 3, "Attitude": 3}, "strengths": ["按时甚至提前交付 — PM直接反馈,是这份profile里最强的信号,胜过聊天量", "低维护worker:不需要频繁催促、不需要多轮答疑,独立完成能力强", "早期PM曾明确表扬motion detection准确度(Apr 13),说明质量底子在", "稳定不出事 — 17天里零争议、零投诉、无deadline miss"], "concerns": ["几乎零WhatsApp沟通(17天仅2条消息),重要通知容易漏掉 — 平台维护、guideline更新这些群发的信息,她可能没看见", "不主动上报edge case或bug — 她解决不了的问题团队永远不会知道,质量/coverage存在盲点", "很难做targeted coaching — 缺乏对话,PM没法针对性给反馈、也没法评估学习曲线", "如果未来任务类型变复杂或需要协作,目前这种沟通模式会变成瓶颈"], "learning_curve": "无法从聊天判断 — 她既没反复问同类问题(可能说明懂了),也没主动交流新问题(可能说明遇到困难也不说)。需要配合平台按时间段的质量数据才能看出是否进步。", "comm_style": "极简,只在必须时发言。Apr 15报过一次website error(带截图,说明能清晰沟通);其他时间基本沉默。不是态度问题,是style偏好。", "quotes": [["Apr 13 — PM明确表扬", "motion detection accuracy and work speed 获得Mengmeng点赞"], ["Apr 15 — 唯一主动沟通 (报bug)", "website error with screenshot, tried to solve before asking"], ["数据窗口内总消息数", "17 天内仅 2 条 — 但任务交付正常"]], "_group": "G2", "_group_num": 2, "_first_name": "Ariel", "_metrics": {"freelancer_name": "G2 Ariel", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 38, "freelancer_messages": 2, "pm_messages": 36, "freelancer_active_days": 2, "active_day_rate": 0.12, "avg_response_min": 112.1, "median_response_min": 224.2, "response_samples": 2, "fast_reply_pct": 50.0, "slow_reply_count_over_2h": 1, "fl_questions_asked": 0, "fl_attachments": 1, "apologies": 0, "thanks": 0, "acknowledgments": 0, "avg_msg_length": 8.0, "weekend_msgs": 0, "most_active_hour": 17, "week1_messages": 1, "week1_questions": 0, "later_messages": 1, "later_questions": 0}, "_avg": 3.0, "_avg10": 6.0}, {"folder": "G2 Smitha_annotator", "display_name": "Smitha (G2)", "background": "India-based; 17-day tenure; consistently manages workload across multiple task types (CV, DF, VE, VQ, SC); shows willingness to take on bonus tasks.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and monitor. Strong performer on delivery and attitude. Continue assigning bonus tasks; provide targeted feedback on quality edge cases (especially VE tasks). Strong candidate for team leadership.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 3, "Responsiveness": 3, "Communication": 3, "Reliability": 4, "Initiative": 4, "Learning curve": 4, "Attitude": 5}, "strengths": ["Highly reliable on deadlines—hits or beats 7pm UTC+8 targets consistently, even working through personal hardship (family loss on Apr 17)", "Proactively volunteers for bonus tasks and extra work; completed 500 additional VQ videos on Apr 23 while managing base VE load", "Demonstrates strong attitude and resilience—received feedback on quality (Apr 13: 'annotation results are not ideal'), reflected genuinely, and committed to improvement", "Active communicator with structured updates—includes screenshots and task completion confirmations; asks clarifying questions before starting new task types", "Responsive—median 6.3 min, 67% fast replies; available 15 of 17 active days; weekend work on Apr 13, 16-23", "Shows growth trajectory—moved from Caption Verification (Apr 7-9) through DF, VE to more complex VQ and SC tasks by Apr 19-20"], "concerns": ["Quality flagged week 1—PM noted 'annotation results are not ideal' (Apr 13), suggesting accuracy gaps in CV/VE tasks despite effort", "Occasional slow response cluster—14 replies over 2 hours on Apr 20, likely due to platform issues but contributed to deadline pressure", "May overcommit on bonus tasks—assigned 500 extra VQ on Apr 22/23 while managing 510 base VE tasks; quality under stress unclear"], "learning_curve": "Steady upward. Week 1 showed quality concerns on CV and VE tasks; by Apr 13 she identified root causes (needing clearer guidelines with examples). After PM guidance on priority rules (VE > VQ, Apr 23), execution improved. No regression patterns. Actively asks for calibration feedback.", "comm_style": "Warm, professional, solutions-oriented. Uses emojis sparingly. Clear message structure: task completion updates with screenshots, acknowledgments of feedback ('Thank you'), direct yes/no on assignments. Respectful tone even under stress.", "quotes": [["Apr 13 — reflecting on feedback", "Sorry for my incorrect annotations. I realize I made mistakes, and I will work on identifying and correcting them."], ["Apr 18 — proactive on urgent task", "You can assign me the task I will complete within the deadline."], ["Apr 22 — confirming priorities", "Sure Xiang assign the tasks to me I will try to complete within the deadline."], ["Apr 23 — clarity-seeking", "Hi Can i know which task is high priority? 1. 260420-VQ-7k 2. 260422-VE-2k-B2"]], "_group": "G2", "_group_num": 2, "_first_name": "Smitha", "_metrics": {"freelancer_name": "G2 Smitha", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 136, "freelancer_messages": 74, "pm_messages": 62, "freelancer_active_days": 15, "active_day_rate": 0.88, "avg_response_min": 74.5, "median_response_min": 6.3, "response_samples": 60, "fast_reply_pct": 67.0, "slow_reply_count_over_2h": 14, "fl_questions_asked": 6, "fl_attachments": 4, "apologies": 1, "thanks": 12, "acknowledgments": 26, "avg_msg_length": 65.1, "weekend_msgs": 11, "most_active_hour": 18, "week1_messages": 28, "week1_questions": 4, "later_messages": 46, "later_questions": 2}, "_avg": 3.75, "_avg10": 7.5}, {"folder": "G2 Yoseph_annotator", "display_name": "Yoseph (G2)", "background": "Indonesia-based; 17-day tenure; proactive learner; strong on volume and bonus work; some timezone challenges evident.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and develop. High productivity and positive attitude; prioritize quality feedback on edge cases (e.g., Japanese/Korean text handling). Monitor responsiveness during extended multi-day stretches. Assign as peer mentor.", "risk_level": "Low", "scores": {"Productivity": 5, "Quality": 3, "Responsiveness": 3, "Communication": 4, "Reliability": 4, "Initiative": 5, "Learning curve": 4, "Attitude": 5}, "strengths": ["Exceptional productivity—completed 1000 CV tasks by Apr 8, jumped to VQ (1000 by Apr 10), VE (1500+ by Apr 17), and SC bonus task (500 by Apr 19). Explicitly states 'comfortable with 1000-1200 per day' (Apr 22)", "Highly proactive—volunteers for new task types, asks clarifying questions before diving in (e.g., 'Is it like the identification of 0.5s start and end?' for SC task on Apr 18), offers suggestions ('My favorite one is SC')", "Strong problem-solver—reports bugs with context ('I have tried using another browser'), escalates platform issues ('saving taking too much time'), works around obstacles", "Responsive and engaged—median 17.5 min response time; 59% fast replies; consistently says 'Well noted' and provides status updates; asks for assignments proactively (Apr 18: 'is there any new task coming in?')", "Growth mindset—accepts feedback on clarity standards (Apr 13: 'I am sorry if the results are not up to the standards yet'), documents learnings, adjusts approach", "Generous team player—works overnight, takes on bonus SC task eagerly, flexible on task preferences, maintains positive tone ('I'm free tonight, so I think I will do it in advance')"], "concerns": ["Quality gap flagged week 1—PM noted 'annotation results are not ideal' (Apr 13), same signal as other G2/G3 cohort; specific errors not detailed but implies accuracy below threshold", "Late-night work pattern—multiple messages 00:00-03:00 (Apr 17, 19, 20); may indicate timezone strain or unsustainable pace despite claimed capacity", "Occasional hesitation on complex tasks—asked multiple clarifications on VE text-checking (Apr 11: worried about Japanese/Korean kanji 'word by word') before PM clarified abstraction level"], "learning_curve": "Positive. Week 1 showed quality feedback concern but quickly asked for calibration details. By Apr 13-14, shows understanding of priority rules. Recalibration feedback on Clarity standards (Apr 13) incorporated by Apr 20+. Actively tracks own capacity and communicates limits. No repeat errors noted.", "comm_style": "Enthusiastic, emoji-heavy (🙌, 🫡, 😁), conversational. Includes video IDs and screenshots when reporting issues. Clear yes/no on assignments. Occasionally casual ('sorry I was in the zone'), warm and personable. English is fluent but informal.", "quotes": [["Apr 9 — completing early", "Hello Sivan well noted, already finished for the 1000 task of the caption verification task. Looking forward the next task 🙌"], ["Apr 18 — eager for bonus", "Well noted, yes sure I can working on it now immediately"], ["Apr 22 — stating capacity", "I think now I am comfortable to working on 1000-1200 per day, can push to 1500 with overtime, depends on the annotation type."], ["Apr 23 — problem-solving", "Hello @panxuan sorry I got internet issue last hour. Well noted, after I finish VE, I will go straight to the VQ"]], "_group": "G2", "_group_num": 2, "_first_name": "Yoseph", "_metrics": {"freelancer_name": "G2 Yoseph", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 110, "freelancer_messages": 51, "pm_messages": 59, "freelancer_active_days": 14, "active_day_rate": 0.82, "avg_response_min": 44.8, "median_response_min": 17.5, "response_samples": 56, "fast_reply_pct": 59.0, "slow_reply_count_over_2h": 4, "fl_questions_asked": 7, "fl_attachments": 1, "apologies": 5, "thanks": 3, "acknowledgments": 30, "avg_msg_length": 86.6, "weekend_msgs": 13, "most_active_hour": 17, "week1_messages": 18, "week1_questions": 2, "later_messages": 33, "later_questions": 5}, "_avg": 4.12, "_avg10": 8.2}, {"folder": "G3 Abhiraj_annotator", "display_name": "Abhiraj (G3)", "background": "India-based; 17-day tenure (Apr 7-23); methodical, detail-oriented; all 17 active days; high message volume (93 freelancer msgs) indicating engagement.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain with focus on quality calibration. Strong on engagement, communication, and initiative. Prioritize detailed feedback loops on edge cases (split-screen, frame detection); provide written calibration examples to accelerate accuracy gains. Invest in mentoring.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 3, "Responsiveness": 3, "Communication": 5, "Reliability": 4, "Initiative": 4, "Learning curve": 4, "Attitude": 4}, "strengths": ["Exceptional communicator—asks precise, specific questions with context: 'Could you please give us a example?' for split-screen handling (Apr 13), includes video numbers, screenshots for platform issues (Apr 16, 20, 21)", "Detail-oriented and thorough—flags technical edge cases (frame counter differences, video loading delays, save timeouts) and seeks clarification proactively; reviews own work ('reviewing' on Apr 14 before submitting)", "Highly engaged across all 17 days—no absences; proactively checks-in ('just wanted to check—is today a holiday?' Apr 12); offers availability for bonus work (Apr 18: 'yes I am available from tonight')", "Strong work ethic and reliability—hits deadlines consistently, handles platform outages with patience, works offline mode after learning (Apr 14), completes assigned bonus tasks (SC 500 by Apr 20)", "Reflective learner—produces thoughtful week-1 feedback acknowledging edge cases, speed-accuracy tradeoffs, and platform UX (Apr 13 detailed response on duplicate frame difficulty, overlay vs animated content)", "Professional attitude—accepts corrections gracefully (Apr 10 feedback on 'labeling too loose' met with 'I understand your concern'), thanks PMs regularly, no defensiveness"], "concerns": ["Quality flagged in week 1—PM noted 'labeling was too loose' on DF task (Apr 10: 'Many videos had duplicate frames, but you missed them'), suggesting lower sensitivity to subtle visual cues", "Platform-dependent productivity—multiple slow load issues (Apr 13, 21-22, 16) that required offline mode workarounds; dependent on stable infrastructure for speed", "Late-night work pattern—messages 23:41-00:46 (Apr 13-14) and multiple 19:00+ sessions; sustainability unknown but no complaints raised"], "learning_curve": "Strong upward trajectory. Week 1: DF 'loose labeling' feedback and VE clarity questions. By Apr 14-15, incorporated guidance (split-screen, frame counting), completed VQ task smoothly. Apr 16+ shows independent problem-solving (offline mode), few repeat questions. Clear arc from guideline-dependent to self-reliant.", "comm_style": "Formal, professional, clear. Structured updates: 'Hi good evening. I have completed the task. Thank you.' Includes 'Thank you' frequently. Asks questions in complete sentences with context. Uses 'sir/ma'am' when addressing PMs. Writes detailed feedback documents.", "quotes": [["Apr 13 — thoughtful reflection", "Some edge cases were difficult to judge consistently, especially where category boundaries overlap (for example, duplicate frames vs natural pauses, or overlay vs animated scene content)."], ["Apr 15 — professional follow-up", "Thank you! I appreciate the feedback and look forward to the next task."], ["Apr 22 — commitment under pressure", "I will try my best. Thank you."], ["Apr 23 — persistence despite issues", "Hi, good morning. I just woke up after working late last night, but no worries, I will complete the task within the timeline. Thank you."]], "_group": "G3", "_group_num": 3, "_first_name": "Abhiraj", "_metrics": {"freelancer_name": "G3 Abhiraj", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 195, "freelancer_messages": 93, "pm_messages": 102, "freelancer_active_days": 17, "active_day_rate": 1.0, "avg_response_min": 45.8, "median_response_min": 3.6, "response_samples": 97, "fast_reply_pct": 63.0, "slow_reply_count_over_2h": 10, "fl_questions_asked": 7, "fl_attachments": 6, "apologies": 0, "thanks": 37, "acknowledgments": 27, "avg_msg_length": 62.8, "weekend_msgs": 17, "most_active_hour": 12, "week1_messages": 41, "week1_questions": 6, "later_messages": 52, "later_questions": 1}, "_avg": 3.88, "_avg10": 7.8}, {"folder": "G3 Behzad_annotator", "display_name": "Behzad (G3)", "background": "4 years of annotation experience; works up to 10-11 hrs/day; self-describes as fully available", "label": "⭐ Top Performer", "recommendation": "Retain & reward. Use as bench mark / peer coach. Pay attention to occasional over-interpretation of guidelines.", "risk_level": "Low", "scores": {"Productivity": 5, "Quality": 4, "Responsiveness": 5, "Communication": 4, "Reliability": 4, "Initiative": 5, "Learning curve": 5, "Attitude": 5}, "strengths": ["Highest volume in pilot (143 outgoing msgs, 15 active days) — consistent daily delivery", "Fast responder (20 min avg) — rarely leaves PM waiting", "Proactively requests more work when free (\"I have capacity of 10-11 hours daily\")", "Takes bonus tasks enthusiastically; handled 3 extra VQ tasks on top of base load", "Actively flags tricky edge cases with screenshot + video ID (e.g. overlay vs sticker, borderline cases)", "Praised by team: \"annotation machine\", \"far ahead of the rest of our team\""], "concerns": ["Week-1 slip: had silly marking errors blamed on slow internet — took feedback seriously and improved", "Sometimes over-interprets (e.g. wanted to mark head movement as 'missed' when only hand gesture needed)", "Late-night working pattern (messages after 22:00, 00:00) — check sustainability", "Initially did not include video ID when asking questions; corrected after being asked"], "learning_curve": "Strong upward. Day 1: 8pm deadline slip + apology. Day 2-3: started proactively asking for more work. Day 5+: explicitly called out by team as top performer. Actively iterates on feedback (e.g. included video IDs in questions after being asked).", "comm_style": "Professional English, warm, uses emojis; informal Urdu-English flavor (\"IA\" = In sha Allah). Respectful and patient — never pushes back defensively. Uses \"Sure\" as default acknowledgment.", "quotes": [["Day 2 — volunteering for more", "Can i have more data points i will be finishing these by today! and can do more tomorrow."], ["Day 2 — self-aware", "It's been 4 years in this field. 🫣"], ["Day 4 — responsible QA", "Don't accept these until i give a full review again i think 5 to 7% videos need a recheck"], ["Week 1 feedback received", "the main reason was my own workflow... it was a bit of lag in videos"], ["Edge case thinking", "If a sticker is not on a borderline it's in the middle or bottom of the screen a big sticker not moving nothing... What about that"]], "_group": "G3", "_group_num": 3, "_first_name": "Behzad", "_metrics": {"freelancer_name": "G3 Behzad", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 263, "freelancer_messages": 143, "pm_messages": 120, "freelancer_active_days": 15, "active_day_rate": 0.88, "avg_response_min": 20.3, "median_response_min": 1.9, "response_samples": 109, "fast_reply_pct": 86.0, "slow_reply_count_over_2h": 5, "fl_questions_asked": 1, "fl_attachments": 13, "apologies": 2, "thanks": 9, "acknowledgments": 42, "avg_msg_length": 43.9, "weekend_msgs": 16, "most_active_hour": 22, "week1_messages": 77, "week1_questions": 1, "later_messages": 66, "later_questions": 0}, "_avg": 4.62, "_avg10": 9.2}, {"folder": "G3 Vignesh_annotator", "display_name": "Vignesh (G3)", "background": "India-based; 18-day tenure (Apr 6-23); high-volume capacity claims; active 17 of 18 days; team lead role (mentions '5 candidates idle', 'Bigwigs Technologies' company account); works through platform constraints.", "label": "🟡 Promising but Constrained", "recommendation": "Monitor closely. High productivity claims but quality and responsiveness metrics suggest speed over accuracy. Require explicit quality checkpoints before bonus assignments. Clarify whether personal capacity or team capacity is being reported. Request individual work isolation for clear metric tracking.", "risk_level": "Medium", "scores": {"Productivity": 4, "Quality": 2, "Responsiveness": 2, "Communication": 2, "Reliability": 3, "Initiative": 4, "Learning curve": 2, "Attitude": 3}, "strengths": ["Extremely high volume output—completed 100 CV (Apr 7), 500 CV + 500 more (Apr 8, 1000 total by 22:05), 1000 VQ (Apr 10), 500 VE (Apr 15), 800 VE merged (Apr 18), plus SC and VQ tasks—consistent multi-task juggling", "Takes initiative and asks for work—'Could you assign more files for tomorrow. 5 candidates are idle now' (Apr 8), eager to take on SC bonus (Apr 18: 'Assign this mam. Tomorrow we will work')", "Transparent about constraints—flags platform difficulty (Apr 20: 'For Scene cut Annotation it takes little more time to annotate compared to text caption and Video Quality. In single frame it has minimum of 3 Scene cut.'). Requests schedule flexibility (Apr 22: 'Tomorrow is election day. Can this working day be replaced by Sunday?')", "Active across all working days (17/18); no absences except pre-negotiated leave (Apr 17)", "Completes assigned work—submits confirmations with screenshots ('Completed mam'); fulfills commitments despite challenges"], "concerns": ["Quality significantly flagged—PM feedback on week 1 (Apr 13) 'annotation results are not ideal' paired with Apr 20 statement 'only marked approximately 300 items so far' suggests slow and/or error-prone execution; later completion of 500 SC task at 21:31 (Apr 20, 3.5h before deadline) hints at rushed final push", "Severe responsiveness issues—median 21.4 min but avg 129.9 min (2.2 hrs); 21 slow replies over 2h; often offline for 12+ hours (Apr 10 asks 'any work today?' suggesting wait-for-assignment dependency)", "Low communication quality—terse, functional messages ('FINISHED 500 MAM', 'mam TAT for this', 'Okay mam'). Minimal context in questions. Vague status updates. Uses 'mam'/''sir' excessively (>10x), suggesting formal/distant dynamic", "Unclear work attribution—messages from 'Vignesh Ragupathy' and '~Bigwigs Technologies' (company account added Apr 13); unclear if personal work or team work; metrics may conflate individual vs team capacity", "Quality did not improve—same feedback signal week 1 and week 2+ with no evidence of corrective action; Apr 20-21 delays suggest persistent accuracy issues or unfamiliar task difficulty (SC flagged as time-consuming)"], "learning_curve": "Flat to declining. Week 1 quality feedback (Apr 13) not addressed in follow-up weeks. Same 'not ideal results' signal persists. Apr 20 deadline miss (300 of 500 by 11:37 AM) and Apr 21 mid-task reminder ('progress not yet halfway') suggest no adjustment to speed-quality balance. Asks few follow-up questions; adopts suggestions passively ('Okay mam').", "comm_style": "Minimal, deferential, transactional. Short messages ('Completed', 'Okay mam', 'FYI'). Heavy use of 'mam'/'sir' (hierarchical). Few emojis. Sparse context in questions or updates. Occasionally polite ('Thank you', 'sorry for the inconvenience') but tone is rushed. English is functional but informal.", "quotes": [["Apr 8 — requesting more work", "Could you assign more files for tomorrow. 5 candidates are idle now"], ["Apr 12 — passive on guidance", "Okay sir thank you!!"], ["Apr 20 — explaining constraint", "For Scene cut Annotation it takes little more time to annotate compared to text caption and Video Quality. In single frame it has minimum of 3 Scene cut. So for us it takes more time."], ["Apr 22 — schedule conflict", "Sir, tomorrow is election day. Can this working day be replaced by Sunday?"]], "_group": "G3", "_group_num": 3, "_first_name": "Vignesh", "_metrics": {"freelancer_name": "G3 Vignesh", "first_message_date": "2026-04-06", "last_message_date": "2026-04-23", "tenure_days": 18, "total_messages": 142, "freelancer_messages": 73, "pm_messages": 69, "freelancer_active_days": 17, "active_day_rate": 0.94, "avg_response_min": 129.9, "median_response_min": 21.4, "response_samples": 67, "fast_reply_pct": 52.0, "slow_reply_count_over_2h": 21, "fl_questions_asked": 3, "fl_attachments": 7, "apologies": 2, "thanks": 8, "acknowledgments": 9, "avg_msg_length": 39.3, "weekend_msgs": 7, "most_active_hour": 22, "week1_messages": 33, "week1_questions": 2, "later_messages": 40, "later_questions": 1}, "_avg": 2.75, "_avg10": 5.5}, {"folder": "G4 Darren_annotator", "display_name": "Darren (G4)", "background": "Active questioner; works day hours; polite professional tone", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain. Natural project-QA candidate — spots platform issues earlier than most. Coach on Week-1 tendency to over-generalize labels.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 3, "Responsiveness": 3, "Communication": 4, "Reliability": 4, "Initiative": 5, "Learning curve": 4, "Attitude": 4}, "strengths": ["Highly engaged: asked 40 questions over 16 days — clearly thinking through edge cases", "Best platform-issue reporter: submitted 15+ video IDs when videos wouldn't load or were too long", "Polite and professional; accepts feedback quickly (\"Got it, thanks\")", "Sets healthy boundaries: politely declined extra 500 tasks when overbooked — not a yes-person", "Explicitly praised Apr 22: \"far ahead of the rest of our team\""], "concerns": ["Week-1 quality issue: marked nearly 100% of DF task as \"yes\" (over-strict) — got corrected", "Slower avg response time (106 min) — not always immediate", "Once deleted a message (22/04) — may indicate frustration during deadline pressure", "Occasional late starts with excuse (\"had to handle some urgent errands\")"], "learning_curve": "Moderate upward. Noticeable growth in question quality: Day 1-2 basic clarifications → Day 5+ nuanced edge-case debates (filter vs overlay vs clarity). Quality issue in Week 1 recovered; by Week 2 recognized as above-average performer.", "comm_style": "Concise, casual English (\"copy\", \"ok lemme sort things out\", \"wit\", \"jt\"). Uses \"🙂\" and \"😊\". Proactively reports done (\"Im done with todays task\").", "quotes": [["Day 1 receptivity", "Got it. Thanks for the tips!"], ["Self-awareness on Week 1 quality", "Almost all of the videos were not moving within 3–4 frames as you mentioned. I'll review today's batch carefully and aim for more accurate judgments."], ["Platform issue QA", "http://...#1501 [cant play video #1501]... #1502 is 2.5 mins long...#1509 not playing as well"], ["Boundaries", "Hi, thanks so much for the kind feedback... I won't be able to take on the additional 500 tasks at this time. I hope that's okay"]], "_group": "G4", "_group_num": 4, "_first_name": "Darren", "_metrics": {"freelancer_name": "G4 Darren", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 197, "freelancer_messages": 107, "pm_messages": 90, "freelancer_active_days": 16, "active_day_rate": 0.94, "avg_response_min": 105.7, "median_response_min": 5.0, "response_samples": 82, "fast_reply_pct": 66.0, "slow_reply_count_over_2h": 17, "fl_questions_asked": 40, "fl_attachments": 14, "apologies": 2, "thanks": 17, "acknowledgments": 20, "avg_msg_length": 45.4, "weekend_msgs": 8, "most_active_hour": 9, "week1_messages": 49, "week1_questions": 14, "later_messages": 58, "later_questions": 26}, "_avg": 3.88, "_avg10": 7.8}, {"folder": "G4 Otto_annotator", "display_name": "Otto (G4)", "background": "17 days tenure; works from UTC+8 zone; methodical annotator who proactively flags edge cases and seeks clarity before marking", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain. Otto is solid and improving. Monitor quality feedback from latest week; encourage expedited task completion but recognize his preference for thorough understanding over speed.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 3, "Responsiveness": 3, "Communication": 4, "Reliability": 4, "Initiative": 4, "Learning curve": 4, "Attitude": 4}, "strengths": ["Consistent delivery: completed every assigned batch on or before deadline across 17 days; turned around quick apologies when delayed", "Proactive clarity-seeker: asks targeted questions with video IDs and screenshots (e.g., 'For ambiguous actions like Smiling, Leaning Over, Blinking...does it mean it is ok if these actions are not extracted?')", "Self-aware troubleshooter: when encountering duplicate frame task on Day 3, immediately flagged concern about marking too many 'yes' and asked for confirmation; showed learning from past choppy video mistakes", "Takes feedback seriously: after PM feedback that annotation results were 'not ideal,' compiled detailed written feedback in Google Doc reflecting on workflow and guidelines", "Adaptable across task types: successfully transitioned from Caption Verification → Duplicate Frame Detection → Video Extraction Verification → Video Quality with minimal ramp time"], "concerns": ["Week 1 quality slip: PM noted 'annotation results are not ideal' mid-week; unclear if this resolved, requires follow-up", "Slower-than-ideal progress on complex tasks: on Apr 22 VE task, PM noted only ~250 of 500 completed 1.5 hours before deadline; has requested multiple deadline extensions", "Occasional over-interpretation: flagged by team as being 'too strict' on Duplicate Frame Detection, marking almost all videos as 'yes' when data was more balanced", "Cannot accept bonus tasks: declined Scene Cut annotation on Apr 18 due to existing commitments, limiting flexibility"], "learning_curve": "Moderate upward trend. Day 1: encountered video playback issues and late start. Days 2–5: clarified edge cases in guidelines, showed ability to adjust. Week 2: flagged quality concerns, demonstrating self-reflection. By Day 7, praised for good results. Recent feedback (Week 2) suggests some rework needed on strictness, but receptiveness to correction is high.", "comm_style": "Professional and courteous; uses gratitude frequently ('Thank you', 'Thank you 🙏', 'Got it, Thank you'); asks clarifying questions directly with specific examples; concise but contextual replies.", "quotes": [["Day 2 — seeking clarity on guidelines", "For ambiguous actions like Smiling, Leaning Over, Blinking, Listening, or Looking at/off-camera\" - If these are included in the extraction, mark as Correct. Does it mean it is ok if these actions are not extracted?"], ["Day 3 — self-aware about past mistakes", "I've worked on Choppy video before, where I made a lot of mistakes. I just want to make sure not to repeat it."], ["Day 6 — reflecting on performance", "I'm sorry that my annotation results were not ideal this past week. I will work on improving my performance and overall quality going forward."], ["Day 10 — proactive completion report", "I've finished today's task. Thank you."]], "_group": "G4", "_group_num": 4, "_first_name": "Otto", "_metrics": {"freelancer_name": "G4 Otto", "first_message_date": "2026-04-07", "last_message_date": "2026-04-23", "tenure_days": 17, "total_messages": 112, "freelancer_messages": 51, "pm_messages": 61, "freelancer_active_days": 15, "active_day_rate": 0.88, "avg_response_min": 69.5, "median_response_min": 8.1, "response_samples": 60, "fast_reply_pct": 63.0, "slow_reply_count_over_2h": 12, "fl_questions_asked": 7, "fl_attachments": 2, "apologies": 3, "thanks": 27, "acknowledgments": 26, "avg_msg_length": 68.1, "weekend_msgs": 7, "most_active_hour": 13, "week1_messages": 31, "week1_questions": 7, "later_messages": 20, "later_questions": 0}, "_avg": 3.75, "_avg10": 7.5}, {"folder": "G4 Shabnam-annotator", "display_name": "Shabnam (G4)", "background": "8 days tenure (joined Apr 16); Pakistan/South Asia timezone; limited historical data; assigned complex Scene Cut and Video Quality tasks early", "label": "🟡 Promising but Constrained", "recommendation": "Observe closely through next week. Shabnam shows responsiveness but is consistently behind pace on complex tasks. Set realistic daily targets and provide more guideline clarity upfront to reduce back-and-forth.", "risk_level": "Medium", "scores": {"Productivity": null, "Quality": null, "Responsiveness": 3, "Communication": 2, "Reliability": 3, "Initiative": 2, "Learning curve": null, "Attitude": 3}, "strengths": ["Responsive to PMs when pinged: median response time 37 min; does not ignore messages", "Completes tasks: managed to finish Scene Cut annotations despite platform issues and complexity, and turned around VQ work ahead of bonus deadline on Apr 22", "Accepts feedback: acknowledged shortcut tips from sivan and tried to use them; asked for help when platform errors occurred", "Polite and functional tone: says 'thanks', avoids complaints, maintains professional demeanor under deadline pressure"], "concerns": ["Consistently behind pace: On Apr 17 (Day 2), PM noted 'you've only completed a small portion' with deadline hours away; on Apr 22, PM flagged only ~120 of 500 VE tasks labeled 2 hours before deadline", "Scene Cut task took much longer than expected: attributed to task complexity ('one video has several scene cut to identify, that's why it takes time'), suggesting initial difficulty with this annotation type", "Struggles with technical details: asked about frame number indicators, shortcut keys not working as expected; took trial-and-error approach rather than reading guidelines first", "Platform issues affected reliability: Apr 19–21 had recurring video loading failures; submitted several screenshots of errors, though some were unrelated to actual platform problems (Apr 21 login/refresh issue)", "Minimal communication on progress: rarely proactively updates; when pinged by PM on Apr 20, response was just 'Ok, i'll try to complete it soon' without timeline"], "learning_curve": "Insufficient tenure for full assessment (7+ day rule), but observable pattern suggests slow early adoption. Days 1–2 struggled with task scope and platform mechanics. By Day 4 (Apr 20), still hitting 300/500 target with 8 PM deadline. No evidence of dramatic improvement in task velocity or question sophistication.", "comm_style": "Terse and transactional. Short acknowledgments ('Ok', 'thanks', 'okay thanks') with minimal elaboration. Asks questions only when stuck; does not proactively report progress. Messages average 25 chars.", "quotes": [["Day 2 — explaining task difficulty", "This scene cut task is a bit lengthy as one video has several scene cut to identify, thats why it takes time."], ["Day 6 — brief progress update under deadline pressure", "Ok, i'll try to complete it soon."], ["Day 8 — proactive task request", "Hi, please assign me new task."]], "_group": "G4", "_group_num": 4, "_first_name": "Shabnam", "_metrics": {"freelancer_name": "G4 Shabnam", "first_message_date": "2026-04-16", "last_message_date": "2026-04-23", "tenure_days": 8, "total_messages": 66, "freelancer_messages": 26, "pm_messages": 40, "freelancer_active_days": 8, "active_day_rate": 1.0, "avg_response_min": 100.4, "median_response_min": 37.2, "response_samples": 37, "fast_reply_pct": 46.0, "slow_reply_count_over_2h": 10, "fl_questions_asked": 3, "fl_attachments": 4, "apologies": 0, "thanks": 9, "acknowledgments": 10, "avg_msg_length": 24.9, "weekend_msgs": 8, "most_active_hour": 19, "week1_messages": 25, "week1_questions": 3, "later_messages": 1, "later_questions": 0}, "_avg": 2.6, "_avg10": 5.2}, {"folder": "G5 Alve-annotator", "display_name": "Alve (G5)", "background": "11 days tenure (joined Apr 13); Indonesia/UTC+7 timezone; proactive, detail-oriented, comprehensive question documentation; early standout performer in group", "label": "⭐ Top Performer", "recommendation": "Retain & reward. Alve is the strongest in G5 — exceptional responsiveness, thorough thinking, and consistent early completion. Use as peer coach. Watch for potential burnout from voluntary extra work; balance load accordingly.", "risk_level": "Low", "scores": {"Productivity": 5, "Quality": 4, "Responsiveness": 5, "Communication": 5, "Reliability": 5, "Initiative": 5, "Learning curve": 5, "Attitude": 5}, "strengths": ["Exceptional responsiveness: median 2.5 min, 92% fast-reply rate — rarely leaves PM waiting; proactive acknowledgments and status updates throughout the day", "Asks smart, specific questions with evidence: submitted curated Google Doc with 8+ questions after first task, showing self-direction; consistently includes video IDs + screenshots in clarifications (e.g., video #910 text on shirt, video #912 subtitles as overlay)", "Consistently exceeds or hits targets early: completed 1000-video task 1 day ahead; reported '1000 videos completed' after platform issues on Apr 16; finished VE tasks by deadline even while handling platform bugs", "Takes initiative on quality: proactively asked about edge cases (split-screen vs overlay, text on physical objects, repetition in extraction), showing desire to get it right rather than default to quick marking", "Gracious with feedback and process issues: acknowledged PM speed-focused coaching with 'you are absolutely right'; offered to skip bonus task on Apr 18 without complaint; thanked team for clarifications multiple times", "Completed all assigned bonuses: finished extra VQ work on Apr 23 ('the extra work has been completed too')"], "concerns": ["Initial task confusion: Day 1–2 delayed start awaiting data upload confirmation; took time to ramp on VQ guidelines before solidifying approach", "Slowed progress on VE task Apr 22: only ~140 annotations 2 hours before deadline; PM noted concern, but Alve reassured with clear communication and completed on time", "Platform issues caused friction: videos not loading on Apr 21, requiring troubleshooting; some minor confusion about task counts (510 vs 500 video discrepancy Apr 23), though quickly resolved"], "learning_curve": "Very strong upward trajectory. Day 1: waited for confirmation before starting (passive but compliant). Day 2–3: proactively compiled 8-question Google Doc and asked edge cases. Day 4: completed task 1 day early. Days 5–11: consistently early completion, fewer clarifying questions (absorbed guidelines), and volunteered for bonus work. By Apr 23, minimal back-and-forth needed.", "comm_style": "Professional, warm, and detail-oriented. Uses complete sentences and context ('Good afternoon. Thanks for the task. I'll proceed accordingly.'). Includes relevant details in questions (video ID, screenshot, reasoning). Expresses gratitude frequently. Polite emoji use (thanks, okay). Longer message avg (61.6 chars) than peers, indicating thoughtfulness.", "quotes": [["Day 2 — proactive, organized feedback", "I have compiled them into this google doc...Please check and give me answers to this questions. I have worked on more videos than the platform is showing."], ["Day 3 — specific, evidence-based question", "Hi @⁨Dini⁩,The red marked area should be also extracted in overlay right?"], ["Day 7 — reliable completion", "All 1000 videos are completed."], ["Apr 23 — voluntary bonus completion", "Additionally, the extra work has been completed too @⁨Mengmeng Xiang⁩"]], "_group": "G5", "_group_num": 5, "_first_name": "Alve", "_metrics": {"freelancer_name": "G5 Alve", "first_message_date": "2026-04-13", "last_message_date": "2026-04-23", "tenure_days": 11, "total_messages": 171, "freelancer_messages": 96, "pm_messages": 75, "freelancer_active_days": 10, "active_day_rate": 0.91, "avg_response_min": 21.8, "median_response_min": 2.5, "response_samples": 73, "fast_reply_pct": 92.0, "slow_reply_count_over_2h": 5, "fl_questions_asked": 13, "fl_attachments": 7, "apologies": 1, "thanks": 15, "acknowledgments": 25, "avg_msg_length": 61.6, "weekend_msgs": 1, "most_active_hour": 15, "week1_messages": 44, "week1_questions": 6, "later_messages": 52, "later_questions": 7}, "_avg": 4.88, "_avg10": 9.8}, {"folder": "G5 Nazima-annotator", "display_name": "Nazima (G5)", "background": "11 days tenure (joined Apr 13); Bangladesh/UTC+6 timezone; high engagement (91 outgoing messages); detail-focused but paces slower on complex tasks; works weekends", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain. Nazima is solid and conscientious. Encourage time management on complex multi-category tasks; her thoroughness is a strength but can cause deadline pressure. Pair with Alve for efficiency tips.", "risk_level": "Low", "scores": {"Productivity": 3, "Quality": 4, "Responsiveness": 4, "Communication": 3, "Reliability": 4, "Initiative": 3, "Learning curve": 4, "Attitude": 4}, "strengths": ["Completes assigned work: delivered all batch tasks by deadlines; voluntarily accepted and finished Scene Cut bonus task on Apr 19 despite platform issues", "Thoughtful annotator: asks clarifying questions when uncertain (e.g., 'What is written in front of this video is present in the video, so should we consider it wrong or right?'); works through confusion rather than guessing", "Improves with feedback: started confused on VE categories (asked 'what is written in front of the wrong'), received guidance, then applied it correctly to later videos", "High engagement: 91 outgoing messages, 38 weekend messages; works through platform issues proactively; reports problems with evidence (screenshots)", "Receptive to coaching: when PM noted time management concern ('watch entire video and understand before proceeding'), responded with acknowledgment ('Thanks') and commitment to expedite without sacrificing quality"], "concerns": ["Slower task velocity on complex batches: On Apr 17, PM noted Nazima 'still have some tasks left' after Day 1 deadline passed; clarified it was for Apr 18, but still finished late. Apr 22 VE (4 categories instead of 2) took full day; Apr 23 still had ~120 videos left near deadline", "Task scope confusion early: misunderstood deadline for Apr 17 task (thought it extended to Apr 18); PM had to clarify multiple times, causing delayed start", "Generic clarifying questions initially: early questions lacked video IDs or specificity (e.g., 'What is written in front of this video...is present...should consider wrong or right?'); only later added video #s and screenshots", "Platform issues had high impact: Apr 21 encountered repeated loading failures requiring multiple refresh attempts and engineer intervention; seemed slower to resume work after each hiatus", "Deadline pressure evident: On Apr 23, ~120 videos left with deadline approaching; PM checked in, Nazima explained thoroughness ('I have to watch the entire video and then understand it before proceeding') but took full hour to finish"], "learning_curve": "Solid improvement arc. Day 1: confused on task scope and VE criteria ('what is written in front...should consider wrong?'). By Day 4: applying VE rules correctly and asking clearer questions. Day 8: accepted Scene Cut bonus proactively. Days 9–11: managing 4-category VE task, though pacing remains slower; feedback reception good ('you are absolutely right').", "comm_style": "Moderate detail, functional but less warm than peers. Uses complete messages but shorter average length (34.9 chars). Acknowledgments tend to be brief ('Okay Thanks', 'ok', 'thanks'). Includes screenshots when reporting problems. Fewer emojis and politeness markers than Alve; more transactional than Otto.", "quotes": [["Day 1 — confusion on criteria", "What is written in front of this video is present in the video, so should we consider it wrong or right?"], ["Day 4 — confusion on deadline interpretation", "The deadline is 7:00 PM on April 18 (UTC+8). But I will try my best to complete it today."], ["Apr 18 — volunteering for extra work", "You assign that task to me and I will try my best to complete it on time."], ["Apr 23 — defending thoroughness under deadline", "You know that I have to watch the entire video and then understand it before proceeding."]], "_group": "G5", "_group_num": 5, "_first_name": "Nazima", "_metrics": {"freelancer_name": "G5 Nazima", "first_message_date": "2026-04-13", "last_message_date": "2026-04-23", "tenure_days": 11, "total_messages": 165, "freelancer_messages": 91, "pm_messages": 74, "freelancer_active_days": 9, "active_day_rate": 0.82, "avg_response_min": 71.5, "median_response_min": 6.6, "response_samples": 68, "fast_reply_pct": 62.0, "slow_reply_count_over_2h": 17, "fl_questions_asked": 10, "fl_attachments": 21, "apologies": 0, "thanks": 11, "acknowledgments": 11, "avg_msg_length": 34.9, "weekend_msgs": 38, "most_active_hour": 21, "week1_messages": 62, "week1_questions": 7, "later_messages": 29, "later_questions": 3}, "_avg": 3.62, "_avg10": 7.2}, {"folder": "G5 Tahmina-annotator", "display_name": "Tahmina (G5)", "background": "Bangladesh-based; faces recurring power outages (\"load shedding\"); joined Apr 13", "label": "🔴 At Risk", "recommendation": "Action needed. Have a candid check-in about realistic workload given load-shedding. Downgrade to smaller daily batches OR phase out if pattern continues. Do not assign urgent/bonus tasks.", "risk_level": "High", "scores": {"Productivity": 2, "Quality": 3, "Responsiveness": 2, "Communication": 2, "Reliability": 2, "Initiative": 2, "Learning curve": 2, "Attitude": 3}, "strengths": ["Honest about her constraints (proactively explains load shedding)", "Asked one solid clarifying question (jump cuts in transitions tab — PM confirmed she was right)", "Attempts quality control: \"Could you please check my work… I'll follow your guidance for the rest\"", "Stays polite under pressure"], "concerns": ["Slowest avg response time in pilot: 280 min — often takes hours or doesn't reply at all", "Day 1: stuck at 89% progress with 100+ videos missing; needed intervention", "Recurring late starts: reminded by PM on Apr 13, 16, 20, 22, 23 that she hasn't started", "Power outages (load shedding) are a persistent external blocker; not going to improve soon", "Minimal communication — often just \"Okay\" without context or plan", "When offered to redistribute bonus task (Apr 23), gave vague answer \"it's not possible to provide a specific time\"", "Passive rather than proactive on edge cases"], "learning_curve": "Flat to declining. No visible improvement in cadence after ~10 days. Each task follows the same pattern: late start → PM reminder → last-minute delivery (or missed).", "comm_style": "Terse, functional English. Minimal emojis, minimal warmth. Apologizes only when called out. Does not volunteer status updates.", "quotes": [["Day-1 context (after being chased)", "I am finished with the task. There is a power outage in my area due to energy shortages in my country."], ["Pattern of late start (Apr 20)", "Should I start to work? I am waiting for the confirmation."], ["Deadline negotiation w/o commitment", "It may be late, but I will finish today's task tonight; it won't be left for tomorrow."], ["Vague commitment", "Actually, it's not possible to provide a specific time because I also have to consider the load-shedding schedule."]], "_group": "G5", "_group_num": 5, "_first_name": "Tahmina", "_metrics": {"freelancer_name": "G5 Tahmina", "first_message_date": "2026-04-13", "last_message_date": "2026-04-23", "tenure_days": 11, "total_messages": 91, "freelancer_messages": 27, "pm_messages": 64, "freelancer_active_days": 9, "active_day_rate": 0.82, "avg_response_min": 280.4, "median_response_min": 8.2, "response_samples": 49, "fast_reply_pct": 51.0, "slow_reply_count_over_2h": 15, "fl_questions_asked": 4, "fl_attachments": 4, "apologies": 0, "thanks": 1, "acknowledgments": 2, "avg_msg_length": 80.6, "weekend_msgs": 9, "most_active_hour": 17, "week1_messages": 17, "week1_questions": 3, "later_messages": 10, "later_questions": 1}, "_avg": 2.25, "_avg10": 4.5}, {"folder": "G6 Fitri_annotator", "display_name": "Fitri (G6)", "background": "Indonesia-based; joined Apr 15; works 1-2 hour shifts; prefers not to work weekends for wellbeing.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and support. Excellent quality recovery after feedback; communicates ahead on constraints. Discuss sustainable weekend boundaries with management to prevent burnout.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 3, "Responsiveness": 5, "Communication": 4, "Reliability": 4, "Initiative": 4, "Learning curve": 4, "Attitude": 5}, "strengths": ["Exceptionally fast responder (3.6 min median, 87% fast reply rate) — rarely leaves PMs waiting despite timezone offset", "Asks detailed, context-rich questions with video IDs and screenshots; shows thoughtful analysis before asking (e.g., static camera vs zoom refocus distinction)", "Strong error recovery: after PM feedback on 'marking everything high', immediately reviewed guidelines and adjusted approach; quality improved visibly", "Consistently meets deadlines despite requesting extensions when needed (communicates proactively, e.g., 'I will finish it in one hour')", "Positive, professional tone; accepts feedback graciously; expresses appreciation and clear reasoning (e.g., explaining 6-day workload concern with integrity focus)", "Advocates respectfully for wellbeing (weekend boundaries) while maintaining commitment to quality and reliability"], "concerns": ["Week-1 quality slip: marked almost all videos as 'high' quality, suggesting shallow understanding of guidelines initially; required explicit coaching to learn overlay vs clarity vs noise distinctions", "External constraint (WiFi issues Apr 20) caused minor delays; relies on single internet connection", "Uncomfortable with weekend work; may resist scaling during crunch periods, though management seems willing to pre-assign lighter loads"], "learning_curve": "Strong upward trajectory. Day 1-2: asked clarifying questions (transition semantics, camera movement). Day 3-5: received quality correction; immediately re-reviewed all guidelines and output. Day 6+: confidently handles edge cases (glitches, mosaic vs clarity, overlay types) with minimal re-asks. Explicitly praised by Mengmeng: 'excellent quality, very positive attitude'.", "comm_style": "Polite, thoughtful Indonesian English; includes emojis sparingly; always includes video ID + screenshot when asking; shows reasoning ('I thought...', 'based on instruction...'); proactively communicates constraints in advance.", "quotes": [["Day 1 — detailed first question", "when I played the video there is only 2 hard cuts, but the extraction showing 4 hard cuts and 1 quick hard cut, is this consider \"wrong\"?"], ["Day 3 — pattern of thoughtful questions", "for this video, it played from a tablet. is this consider bad video? ID 2501"], ["Day 5 — confident edge case handling", "I have question so related with \"no valid face\" in this video #2875 the face only can be seen like 3 seconds with total 10 seconds video length..."], ["Day 8 — advocating for wellbeing", "working until Saturday is usually only for urgent matters and tends to be optional rather than mandatory...we need to maintain the quality, but if we too tired doing the project we might want to rush"], ["Day 8 — gracious response to praise", "thank you, I really appreciate that. and thank you for sharing the positive feedback."]], "_group": "G6", "_group_num": 6, "_first_name": "Fitri", "_metrics": {"freelancer_name": "G6 Fitri", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 167, "freelancer_messages": 72, "pm_messages": 95, "freelancer_active_days": 8, "active_day_rate": 0.89, "avg_response_min": 31.2, "median_response_min": 3.6, "response_samples": 89, "fast_reply_pct": 87.0, "slow_reply_count_over_2h": 7, "fl_questions_asked": 27, "fl_attachments": 9, "apologies": 2, "thanks": 18, "acknowledgments": 13, "avg_msg_length": 106.3, "weekend_msgs": 1, "most_active_hour": 16, "week1_messages": 57, "week1_questions": 20, "later_messages": 15, "later_questions": 7}, "_avg": 4.12, "_avg10": 8.2}, {"folder": "G6 Kim-annotator", "display_name": "Kim (G6)", "background": "Philippines-based; joined Apr 15; proactive, enthusiastic annotator; expressed ADHD-related work motivation.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and expand. Strong learner, proactive bug reporter, high initiative. Ready for more complex task types or mentorship role. Monitor for overcommitment given volunteer extra work patterns.", "risk_level": "Low", "scores": {"Productivity": 4, "Quality": 4, "Responsiveness": 3, "Communication": 5, "Reliability": 4, "Initiative": 5, "Learning curve": 5, "Attitude": 5}, "strengths": ["Exemplary communication: asks specific questions with full context (e.g., 'Do we count transitions of subject or only whole video?' + shared link + screenshots); always includes video ID and reasoning", "Highly proactive: volunteered for bonus SC task mid-week; continuously flagged platform bugs (annotation not saving, videos not loading); reported issues with exact screenshots", "Fast learner: asked nuanced questions early (subject vs frame transitions), received correction, then immediately applied it correctly to similar cases; explicitly praised by Mengmeng 'Great job!' and 'It looks like you've got the hang of it'", "Consistently completes tasks early or on time despite technical obstacles; completed VE task ahead of schedule, then pivoted smoothly to SC when platform issues arose", "Warm, engaging tone with emojis; expresses gratitude genuinely; handled platform frustrations gracefully ('i was anxious about the deadline... my ADHD is telling me that i should finish this job')", "Asks clarifying questions thoughtfully (e.g., overlay vs subtitles, broadcast graphic vs overlay) before marking; shows systematic reasoning"], "concerns": ["Median response time 8.4 min is healthy, but average 66.2 min suggests occasional slow replies; hit 19 replies over 2h during complex questions (Apr 20)", "Over-volunteers for extra work despite existing load; may be at risk of burnout if encouraged too aggressively (volunteered for SC + asked for 200 more after errands Apr 18)"], "learning_curve": "Steep upward arc. Day 1-2: familiarizing, asked 7 clarifying questions before starting (transition categories, handheld motion). Day 3: received feedback on subject vs frame distinction; immediately re-applied it correctly. Day 4-5: handled SC platform bug issue independently, flagged it proactively, adjusted workflow. Day 6+: confident on all task types; minimal questions, all quality-focused. By Day 9: has done VE, SC, and VQ tasks with mastery shown in emoji-filled completion messages.", "comm_style": "Conversational, warm, emoji-rich English; includes video IDs and screenshots naturally; polite apologies ('Apologies for taking a while'); shows personality ('gotta run some errands', 'my ADHD is telling me...'); asks questions before acting, not after.", "quotes": [["Day 2 — systematic first question", "the subject had a warp transition going to the right but the entire video remains the same...should it be counted?"], ["Day 2 — accepts feedback gracefully", "Apologies for taking a while—I was still getting used to the guidelines and trying to internalize everything. I'm now able to work a bit faster."], ["Day 4 — proactively reports bugs", "The 1st to 3rd videos didn't save my annotations, but from the 4th onward, they're saving now. Glad I flagged the issue earlier 😅"], ["Day 4 — expresses personality", "thank you guys for fixing it ASAP! 🙏🙏"], ["Day 8 — confident task switching", "i couldn't verify the mandarin texts subtitles here. is there a way to it?"]], "_group": "G6", "_group_num": 6, "_first_name": "Kim", "_metrics": {"freelancer_name": "G6 Kim", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 213, "freelancer_messages": 115, "pm_messages": 98, "freelancer_active_days": 9, "active_day_rate": 1.0, "avg_response_min": 66.2, "median_response_min": 8.4, "response_samples": 96, "fast_reply_pct": 65.0, "slow_reply_count_over_2h": 19, "fl_questions_asked": 18, "fl_attachments": 41, "apologies": 3, "thanks": 26, "acknowledgments": 3, "avg_msg_length": 60.9, "weekend_msgs": 29, "most_active_hour": 13, "week1_messages": 100, "week1_questions": 17, "later_messages": 15, "later_questions": 1}, "_avg": 4.38, "_avg10": 8.8}, {"folder": "G6 Rahadatul_annotator", "display_name": "Rahadatul (G6)", "background": "Bangladesh-based; joined Apr 15; very limited chat engagement; quiet but reliable on base tasks; declined bonus work citing personal plans.", "label": "🆕 Too Early (Baseline)", "recommendation": "Gather more data. Current tenure (9 days, 6 active days) insufficient for robust scoring. Schedule check-in on Week 2 to assess engagement, learning trajectory, and capacity. Monitor whether quiet profile is personality or disengagement.", "risk_level": "Unknown", "scores": {"Productivity": null, "Quality": null, "Responsiveness": 4, "Communication": 2, "Reliability": 4, "Initiative": 2, "Learning curve": null, "Attitude": 3}, "strengths": ["Fast responder relative to message rate (12.7 min median, 83% fast reply) — replies come within reasonable timeframe", "Completed assigned base tasks without escalation or excuse; no missed deadlines reported", "Shows basic accountability: asked for task confirmation, reported unplayable videos, acknowledged updates", "Polite, professional tone in brief messages; uses 'thank you' and 'noted' consistently"], "concerns": ["Minimal communication: only 15 freelancer messages across 9 days vs 72 (Fitri) or 115 (Kim); asks almost no clarifying questions (3 questions total, mostly technical)", "Very short replies: avg message length 122.5 chars but style is terse ('Hi, noted. I've completed...', 'Okay, I understand. Thank you'); no elaboration or reasoning shown", "Declined bonus work (Apr 18-19) citing personal plans; no subsequent proactive engagement or extra effort", "Only 6 active days out of 9 tenure; low engagement frequency", "Reported health issue (Apr 22) causing slow progress on complex task; only 70 videos labeled in 4 hours, ~17 items/hour vs team expectation of 100+ items/hour"], "learning_curve": "Insufficient data. Only completed VE (base) and partial VE (Apr 22 complex version). No visible progression or regression. No corrective feedback received, so improvement trajectory unknown. Health constraint on Apr 22 prevents assessment of task difficulty adaptation.", "comm_style": "Minimal, functional English; sparse punctuation; terse confirmations ('Okay, noted. Thanks', 'Oke, thanks'); includes video IDs when asked but does not elaborate voluntarily; no personality or questions beyond immediate clarifications.", "quotes": [["Day 1 — initial engagement", "I've checked my dashboard but there's no task assigned yet. Could you please check? Thanks!"], ["Day 2 — completes task", "Hi, noted. I've completed the first 500 videos and will continue with the new task. Thanks!"], ["Day 6 — reports technical issue", "Hi, some videos can't be played. Should I skip them or what should I do? Here are the IDs: 2520, 2524, 2525"], ["Day 8 — declines extra work", "I won't be able to take on the additional task right now because I already have other plans today and tomorrow."], ["Day 8 — discloses constraint", "I'm currently not feeling well, which has affected my working speed today. Additionally, this task requires identifying four different caption types, which takes more time to review carefully for each video."]], "_group": "G6", "_group_num": 6, "_first_name": "Rahadatul", "_metrics": {"freelancer_name": "G6 Rahadatul", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 45, "freelancer_messages": 15, "pm_messages": 30, "freelancer_active_days": 6, "active_day_rate": 0.67, "avg_response_min": 37.1, "median_response_min": 12.7, "response_samples": 23, "fast_reply_pct": 83.0, "slow_reply_count_over_2h": 3, "fl_questions_asked": 3, "fl_attachments": 1, "apologies": 1, "thanks": 12, "acknowledgments": 8, "avg_msg_length": 122.5, "weekend_msgs": 1, "most_active_hour": 14, "week1_messages": 12, "week1_questions": 3, "later_messages": 3, "later_questions": 0}, "_avg": 3.0, "_avg10": 6.0}, {"folder": "G7 Gilbert-annotator", "display_name": "Gilbert (G7)", "background": "Philippines-based; joined Apr 15; experienced power outage (external factor); requested deadline extensions and clarification on payment milestones.", "label": "🟠 Needs Coaching", "recommendation": "One-on-one meeting needed. Clarify expectations on deadline inflexibility, task priority sequencing, and bonus structure. Gilbert shows willingness but struggles with time management and concurrent task juggling. Monitor Week 2 closely; set clear SLAs and escalation if pattern continues.", "risk_level": "Medium", "scores": {"Productivity": 2, "Quality": 3, "Responsiveness": 3, "Communication": 3, "Reliability": 2, "Initiative": 2, "Learning curve": 3, "Attitude": 3}, "strengths": ["Asks clarifying questions early (Can I review/edit completed work? How are bonuses structured?); shows process orientation", "Accepts feedback on over-annotation: Mengmeng noted his gesture tracking was too strict; Gilbert acknowledged and adapted approach", "Proactive about external blockers: reported power outage with screenshot, asked for flexibility, continued when power returned", "Completes assigned tasks eventually; shows persistence after technical and personal obstacles (e.g., scene cut completed despite platform issues)", "Professional tone in written communication; uses complete sentences and courteous phrasing"], "concerns": ["Missed multiple deadlines and fell significantly behind target (e.g., Apr 20: less than 50% of SC task done by extended 10am deadline; Apr 23: hasn't started 260422-VE-2k-B2 by 12:40pm when assigned the day before)", "Repeatedly requested deadline extensions (Apr 22: asked for extension citing 'important meeting'; Apr 23: requested 6am finish instead of 7pm, negotiating down)", "Struggled with task prioritization: on Apr 20, PM had to redirect him from SC to VQ (higher priority); confusion on which task to do first", "Avg response time 74 min, only 51% fast reply — slower than peers (Fitri: 31 min avg, Kim: 66 min avg); 9 replies took over 2 hours", "April 20 chat shows confusion: multiple back-and-forth about whether to work on VQ vs SC, whether 'this task' meant which assignment; required repeated clarification from PMs", "Asked 12 questions total but often asked same info twice (payment structure, deadline flexibility, next steps); suggests difficulty retaining instructions"], "learning_curve": "Flat. Completed VE, SC, VQ task types over 9 days but no evidence of acceleration. Struggled equally with simple VE on Day 1 (didn't start till reminded) and complex VE on Day 8 (requested extension, had to be coached on focus). Feedback on over-tracking gestures (Apr 22) was acknowledged but no follow-up evidence of applying it.", "comm_style": "Polite, formal English; asks questions but often repeats same ask across messages; expresses gratitude but coupled with negotiation (e.g., 'thanks for the update, but can I get an extension?'); shows some uncertainty in tone ('I guess I will be able to...', 'I cannot tell because...').", "quotes": [["Day 3 — early clarifying question", "Good morning! Can I review or make any changes from the videos I've completed from the first day?"], ["Day 4 — accepts extra work", "Yes, I am willing to take the task. Will I be paid on Upwork after this?"], ["Day 5 — external blocker but communicates", "unfortunately there's a power interruption in our place from 5am-6pm...Can I complete this tonight once the electricity is restored?"], ["Day 8 — requests deadline extension", "Would it be okay to extend the deadline to tomorrow? We agreed on the 400–600 annotations daily, and I have something important to take care of today."], ["Day 9 — negotiates further", "I cannot tell because I'm not home yet. Can I get it done by 6am tomorrow?"]], "_group": "G7", "_group_num": 7, "_first_name": "Gilbert", "_metrics": {"freelancer_name": "G7 Gilbert", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 106, "freelancer_messages": 43, "pm_messages": 63, "freelancer_active_days": 7, "active_day_rate": 0.78, "avg_response_min": 74.0, "median_response_min": 20.7, "response_samples": 55, "fast_reply_pct": 51.0, "slow_reply_count_over_2h": 9, "fl_questions_asked": 12, "fl_attachments": 6, "apologies": 2, "thanks": 11, "acknowledgments": 4, "avg_msg_length": 78.4, "weekend_msgs": 9, "most_active_hour": 8, "week1_messages": 37, "week1_questions": 9, "later_messages": 6, "later_questions": 3}, "_avg": 2.62, "_avg10": 5.2}, {"folder": "G7 Hanif-annotator", "display_name": "Hanif (G7)", "background": "Pakistan-based (UTC+5); joined Apr 15; experienced professional; faced personal emergency (aunt's funeral) on first working day, recovered well.", "label": "🟡 Promising but Constrained", "recommendation": "Keep on track but monitor closely. Emphasize time-zone aware deadlines going forward. If consistency holds, upgrade to Reliable Mid-Senior. Consider assigning bonus-eligible tasks once reliability stabilizes (currently at ~8 days tenure).", "risk_level": "Medium", "scores": {"Productivity": null, "Quality": null, "Responsiveness": 4, "Communication": 3, "Reliability": 3, "Initiative": 3, "Learning curve": null, "Attitude": 4}, "strengths": ["Fast responder: 5.7 min median response time, 74% fast-reply rate — stays engaged and available", "Genuine accountability: proactively explained funeral emergency with sincere apology; committed to catching up", "Positive attitude under pressure: gracefully accepted extension and PM feedback; says 'Thank you' frequently (14 thanks, 17 acknowledgments)", "Active question-asker on technical details (scene cuts, quality criteria) — shows genuine effort to understand guidelines", "Willingness to take weekend tasks: volunteered for bonus Scene Cut task (500 videos) and promised on-time delivery", "Professional communication: clear, respectful English; acknowledges errors and seeks clarification"], "concerns": ["Late deadline misses early on: Day 1 (Apr 15 funeral excuse aside), still accumulated 2-3 days of delayed work by Apr 17", "Slow work pace on VE tasks: PM flagged only ~150/500 labeled by Apr 22 (~2 hrs before deadline); website issues complicated picture but pattern shows slowness", "Timezone confusion: took 4 hours to realize 7pm UTC+8 deadline with UTC+5 offset; requires explicit local-time clarity", "Occasional technical gaps: asked for confirmation on basic task format (segment placement) after reading guidelines, suggesting rushed onboarding"], "learning_curve": "Mixed signals. Day 1: emergency-driven delay, but apologized earnestly. Days 2-3: started proactively asking questions and accepting extra work. Days 4-8: struggled with time management (pace slow, deadline misses recurred), but never defensive. No clear upward trajectory yet, but attitude suggests capacity to improve with clearer time-zone anchors.", "comm_style": "Polite, formal English with occasional grammatical slips (\"while watching and reading the extraction took a bit time\"). Shows respect to PMs; rarely initiates updates but responsive when pinged. Apologetic tone when behind.", "quotes": [["Day 1 — taking responsibility", "I sincerely apologize for the delay in today's work. I was attending my aunt's funeral earlier, which is why I was unable to complete the tasks as scheduled."], ["Day 2 — eager to prove commitment", "i'll try to complete all the remaining, tomorrow till 9 pm my time or earlier. If you want you can add more 500 I'll complete those all till sunday evening."], ["Day 5 — showing care with clarification", "Please conform that need to add segment to every scene cut in the video, right?"], ["Day 8 — explaining slowness", "while watching and reading the extraction took a bit time that s why its bit slower."]], "_group": "G7", "_group_num": 7, "_first_name": "Hanif", "_metrics": {"freelancer_name": "G7 Hanif", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 91, "freelancer_messages": 34, "pm_messages": 57, "freelancer_active_days": 8, "active_day_rate": 0.89, "avg_response_min": 61.7, "median_response_min": 5.7, "response_samples": 50, "fast_reply_pct": 74.0, "slow_reply_count_over_2h": 6, "fl_questions_asked": 4, "fl_attachments": 1, "apologies": 1, "thanks": 14, "acknowledgments": 17, "avg_msg_length": 53.5, "weekend_msgs": 10, "most_active_hour": 13, "week1_messages": 32, "week1_questions": 3, "later_messages": 2, "later_questions": 1}, "_avg": 3.4, "_avg10": 6.8}, {"folder": "G7 Tania-annotator", "display_name": "Tania (G7)", "background": "University student; works evenings; new joiner (Apr 15)", "label": "🟡 Promising but Constrained", "recommendation": "Retain with coaching. Assign task size that fits evening-only window. Monitor quality closely after Week-1 VQ over-labeling. Be firm on deadline expectations.", "risk_level": "Medium", "scores": {"Productivity": 3, "Quality": 3, "Responsiveness": 4, "Communication": 5, "Reliability": 3, "Initiative": 4, "Learning curve": 3, "Attitude": 5}, "strengths": ["Outstanding responsiveness: 8 min avg — fastest in pilot (replies \"Okay, Thank you\" within minutes)", "Extremely polite and grateful tone; uses 😊 consistently — lifts group morale", "Asks thoughtful clarifying questions with screenshots (e.g. gesture empty → missed vs correct)", "Embraces challenges: immediately accepted weekend bonus task", "Proactive when platform issues occur (reported black-screen videos)"], "concerns": ["Week-1 VQ quality issue: marked ~100% as \"high\" — was corrected by PM Apr 20", "Chronic deadline negotiation: asked for extension Apr 16, 19, 21, 22, 23 (5 out of 9 days)", "University class schedule blocks daytime — forces squeezed deliveries at night", "Once slept in assuming task was done; overslept on Apr 21", "Acknowledgment-heavy but light on substantive engagement (many \"Okay, Thank you\")"], "learning_curve": "Early. Day 1: solid clarifying questions → Day 6 (Apr 20): first serious quality feedback → Day 7+: responding to feedback but still negotiating deadlines. Not enough data yet to confirm she's genuinely improving on VQ accuracy.", "comm_style": "Very polite, formal English, gratitude-heavy. Uses 😊 frequently. Tends toward short acknowledgments; occasional typos. Respectful even when asking for accommodations.", "quotes": [["Day 1 warmth", "Hello, thank you! Nice to meet you all 😊"], ["Good clarifying question", "Some of the videos are in Russian and Chinese language. In this case what's the process to understand what's the audio about?"], ["Deadline negotiation pattern", "I thought that my today's task was almost done, that's why I didn't wake up early. Also, I have classes today."], ["Context acknowledgment", "Mainly I start working early because of my classes. I'll be able work more 30min before I go to my class."]], "_group": "G7", "_group_num": 7, "_first_name": "Tania", "_metrics": {"freelancer_name": "G7 Tania", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 117, "freelancer_messages": 68, "pm_messages": 49, "freelancer_active_days": 9, "active_day_rate": 1.0, "avg_response_min": 8.0, "median_response_min": 1.7, "response_samples": 48, "fast_reply_pct": 94.0, "slow_reply_count_over_2h": 0, "fl_questions_asked": 13, "fl_attachments": 3, "apologies": 2, "thanks": 31, "acknowledgments": 33, "avg_msg_length": 60.4, "weekend_msgs": 12, "most_active_hour": 16, "week1_messages": 64, "week1_questions": 13, "later_messages": 4, "later_questions": 0}, "_avg": 3.75, "_avg10": 7.5}, {"folder": "G8 Ayesha-annotator", "display_name": "Ayesha (G8)", "background": "Southeast Asia-based; joined Apr 15; fully available and willing to work weekends; proactive learner.", "label": "✅ Reliable Mid-Senior", "recommendation": "Retain and continue assigning mixed task types. Monitor for burnout (weekend work); ensure bonus payouts are tracked. Use as peer coach for Scene Cut guidelines (showed strong adaptive learning). Safe to scale workload.", "risk_level": "Low", "scores": {"Productivity": null, "Quality": 4, "Responsiveness": 3, "Communication": 4, "Reliability": 4, "Initiative": 4, "Learning curve": null, "Attitude": 5}, "strengths": ["High reliability: hit deadlines on both VE (1500 videos) and Scene Cut tasks; explicitly tracked completion and reported status proactively", "Strong quality feedback loop: after PM corrected scene-cut precision (marking long intervals instead of frame boundaries), internalized feedback and demonstrated mastery in revised attempts", "Willing to work weekends: explicitly said 'I work over the weekend' and followed through; volunteered for bonus tasks without hesitation", "Excellent attitude: 'Thank You!!' appears repeatedly (16 thanks, 5 acknowledgments); maintains positivity despite platform issues and tight deadlines", "Proactive problem-reporting: flagged video-loading issues with screenshots; asked clarifying questions on scene-cut interpretation; sought feedback ('Please have a look') on completed batches", "Clear communication with screenshots/context: when confused about Scene Cut task visibility, provided fullscreen screenshot for PM review"], "concerns": ["Slow ramp-up: took 48 hours to complete initial 500-video task, lagged behind target on Apr 20 (only ~100 VQ labels by deadline reminder)", "Initial guideline confusion: Scene Cut task required 3+ rounds of clarification (frame-boundary precision, camera movement vs. cuts) before full understanding", "Responsive but not proactive: median response time 16.6 min but avg 91.9 min — some slow replies mixed in; doesn't send first message unprompted"], "learning_curve": "Strong. Day 1-2: slow initial pace + confused on Scene Cut framing. Day 3: corrective feedback received; explicitly restated understanding ('I will ignore camera movements such as zooms, pans, or shakes and only mark actual scene cuts'). Day 4-8: smooth delivery on both VE batches; completed ahead of deadline (Apr 23). Clear upward trajectory once guidelines internalized.", "comm_style": "Enthusiastic, respectful English with frequent thank-yous. Uses 'Hey' for informal warmth; includes emojis sparingly (mostly 'Thank You!!'). Reports progress proactively once task is live; asks specific questions with screenshots or context.", "quotes": [["Day 1 — showing availability", "Yes, I work over the weekend, so I can take on this task and complete it within the given deadline. Please feel free to assign more tasks. I am fully available for you."], ["Day 3 — internalizing feedback", "So, for each scene cut, I should only mark the exact boundary frames, the last frame of the previous scene as the start, and the first frame of the next scene as the end."], ["Day 8 — proactive completion report", "I want to update you that I have completed both batches. Please have a look and let me know if you have any questions or comments."]], "_group": "G8", "_group_num": 8, "_first_name": "Ayesha", "_metrics": {"freelancer_name": "G8 Ayesha", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 78, "freelancer_messages": 39, "pm_messages": 39, "freelancer_active_days": 9, "active_day_rate": 1.0, "avg_response_min": 91.9, "median_response_min": 16.6, "response_samples": 36, "fast_reply_pct": 58.0, "slow_reply_count_over_2h": 10, "fl_questions_asked": 3, "fl_attachments": 2, "apologies": 0, "thanks": 16, "acknowledgments": 5, "avg_msg_length": 65.3, "weekend_msgs": 14, "most_active_hour": 19, "week1_messages": 33, "week1_questions": 3, "later_messages": 6, "later_questions": 0}, "_avg": 4.0, "_avg10": 8.0}, {"folder": "G8 Liaquat-annotator", "display_name": "Liaquat (G8)", "background": "Pakistan-based (UTC+5); joined Apr 15; power outages early in tenure; eager, detail-focused learner.", "label": "✅ Reliable Mid-Senior", "recommendation": "High performer — invest in retention. Assign as lead on complex task types (Scene Cut proved expertise). Address timezone offset explicitly in task deadlines (7pm UTC+8 = 9pm Pakistan). Monitor for overwork (proactive approach risked quality slips under pressure Apr 22).", "risk_level": "Low", "scores": {"Productivity": null, "Quality": 4, "Responsiveness": 4, "Communication": 5, "Reliability": 4, "Initiative": 5, "Learning curve": null, "Attitude": 4}, "strengths": ["Outstanding communication: 100.1 avg msg length (longest in cohort); asks specific questions with video IDs + context; explains blockers proactively (electricity issue, timezone confusion)", "Genuine initiative: volunteered to take Scene Cut task on Apr 18; completed all 500 videos early (by Apr 19 morning); asked for more work immediately ('Please assign me more tasks, I'm ready to start immediately')", "Fast responder: 7.3 min median response time, 80% fast-reply rate; present and engaged across all hours", "Handles feedback maturely: when chased on Apr 22 timing ('Your progress far behind'), explained circumstances clearly without defensiveness ('these VE tasks are a bit more detailed')", "Strong technical questions: asked clarifying Qs on audio descriptions, environment sound correctness with video examples (#910, #912, #913); drove PM to confirm guidelines", "Punctual on multiple deadlines: hit Apr 16, 17, 18 deadlines; completed Scene Cut bonus early; finished both VE batches (Apr 22-23) despite time pressure"], "concerns": ["Timezone misunderstanding cost time: initially confused 7pm UTC+8 deadline, took 4 hours to realize it was Apr 17 7pm (not Apr 18), requested 4-hour extension", "Startup delays: had electricity outage on Apr 16, causing half-day lag; required PM nudge to begin work despite being available", "Pressure-driven quality slips: fell behind on VE task Apr 22 (~3 hrs before deadline) and was chased; later clarified VQ was already done, but suggested task switching under time pressure", "Missed one message — had Do Not Disturb on Apr 22, required PM reminder to stay tuned ('keep your \"Do Not Disturb\" mode turned off')"], "learning_curve": "Consistently improving. Days 1-2: startup delays (electricity, timezone confusion), but asked detailed Qs. Days 3-5: quickly mastered VE and Scene Cut (asked granular Qs on audio/environment); asked for more work. Days 6-8: smooth VE delivery despite one Apr 22 miscommunication (prioritization); recovered well, completed both batches by deadline. Trajectory: solid and steady.", "comm_style": "Formal, detailed English; respectful tone throughout. Frequently thanks PMs ('Thank you for understanding'); explains context before asking for help. Long, thoughtful messages. Uses proper sentence structure; rare grammar errors. Apologizes when behind but explains cause clearly.", "quotes": [["Day 1 — thorough question", "in a video the description says \"ambient hum of the public space\" but the actual public noise is loud in background. Should I mark it as \"Incorrect\"?"], ["Day 3 — eager for growth", "Yes I would like to continue working. Please assign me the different type of task and share the guidelines first. I'm ready to learn and start."], ["Day 4 — initiative + immediate follow-up", "Hi, I have completed today's task. I apologize for the delay. I have now started working on the extra 300 videos and will complete as much as I can."], ["Day 4 — asking for more", "Hi, I have completed the task of 300 videos. Please assign me more tasks, I'm ready to start immediately."]], "_group": "G8", "_group_num": 8, "_first_name": "Liaquat", "_metrics": {"freelancer_name": "G8 Liaquat", "first_message_date": "2026-04-15", "last_message_date": "2026-04-23", "tenure_days": 9, "total_messages": 128, "freelancer_messages": 62, "pm_messages": 66, "freelancer_active_days": 9, "active_day_rate": 1.0, "avg_response_min": 51.9, "median_response_min": 7.3, "response_samples": 66, "fast_reply_pct": 80.0, "slow_reply_count_over_2h": 6, "fl_questions_asked": 4, "fl_attachments": 2, "apologies": 5, "thanks": 35, "acknowledgments": 14, "avg_msg_length": 100.1, "weekend_msgs": 16, "most_active_hour": 16, "week1_messages": 50, "week1_questions": 4, "later_messages": 12, "later_questions": 0}, "_avg": 4.33, "_avg10": 8.7}, {"folder": "G8 Saman- annotator", "display_name": "Saman (G8)", "background": "Just joined Apr 22 — only 2 days of data available", "label": "🆕 Too Early (Baseline)", "recommendation": "Evaluate again at end of Week 1. Early signs are mixed-positive: polite, asks good questions, delivered Day-1 task, but follows the common \"late start\" pattern.", "risk_level": "Unknown", "scores": {"Productivity": null, "Quality": null, "Responsiveness": 3, "Communication": 4, "Reliability": null, "Initiative": 4, "Learning curve": null, "Attitude": 4}, "strengths": ["Day-1 behavior: asked for extension proactively instead of missing silently", "Asked 3 substantive questions on Day 1 with video IDs (#1501, #1511, #1761)", "PM complimented her understanding: \"You have a good grasp of our guidelines. Keep up the good work!\"", "Completed Day-1 task by midnight", "Willing to work late (messages at 22:49)"], "concerns": ["Sample size way too small to evaluate quality, learning curve, or reliability", "Follows the 'late start' pattern on Day 2 — got reminded by panxuan", "Casual style (\"rn\", uses 😊 as name) — watch whether this translates to casual work standards"], "learning_curve": "N/A — check again after 7 days.", "comm_style": "Informal but warm; casual abbreviations (\"rn\"). Uses emoji as identity 😊. Polite and grateful.", "quotes": [["Day-1 proactive extension", "I will be starting rn and will do my best to meet the deadline but there maybe a delay of 1 to 2 hours just today from tomorrow i will deliver with the given deadline. Is it possible Just for today"], ["Good clarifying question", "#1501 there's slight movement of head but in description its giving empty so will it be correct or missed can you please comment on it"], ["Day-1 closure", "Done with today's task"]], "_group": "G8", "_group_num": 8, "_first_name": "Saman", "_metrics": {"freelancer_name": "G8 Saman", "first_message_date": "2026-04-22", "last_message_date": "2026-04-23", "tenure_days": 2, "total_messages": 25, "freelancer_messages": 10, "pm_messages": 15, "freelancer_active_days": 2, "active_day_rate": 1.0, "avg_response_min": 121.7, "median_response_min": 127.2, "response_samples": 15, "fast_reply_pct": 27.0, "slow_reply_count_over_2h": 8, "fl_questions_asked": 0, "fl_attachments": 0, "apologies": 0, "thanks": 2, "acknowledgments": 3, "avg_msg_length": 64.8, "weekend_msgs": 0, "most_active_hour": 17, "week1_messages": 10, "week1_questions": 0, "later_messages": 0, "later_questions": 0}, "_avg": 3.75, "_avg10": 7.5}];
+const RUBRIC = [{"key": "Productivity", "zh": "产出量", "def": "每日交付的数量、主动接额外任务的意愿", "levels": [["10", "稳定超日均目标 + 主动要更多任务", 5], ["8", "稳定完成日均目标", 4], ["6", "能完成,但经常贴着deadline交", 3], ["4", "频繁当日做不完", 2], ["2", "持续欠交", 1], ["n/a", "入职不足7天,数据不够判断", 0]]}, {"key": "Quality", "zh": "质量", "def": "标注本身的正确性(目前主要靠聊天信号,平台数据进来后会重新校准)", "levels": [["10", "明确被PM表扬accuracy,近零返工", 5], ["8", "偶有小错,自己能发现并订正", 4], ["6", "符合基本预期,有返工但不频繁", 3], ["4", "多次被纠正,同类错误反复", 2], ["2", "系统性错误(例如全标\"high\"或\"yes\")", 1], ["n/a", "样本不足 / 新人", 0]]}, {"key": "Responsiveness", "zh": "响应速度", "def": "PM消息发出后多久收到回复(需时区修正)", "levels": [["10", "中位数 ≤10分钟,24h内100%响应", 5], ["8", "中位数 ≤30分钟", 4], ["6", "中位数 ≤60分钟", 3], ["4", "中位数 2–4小时", 2], ["2", "经常不回,需@多次", 1]]}, {"key": "Communication", "zh": "沟通质量", "def": "问题是否具体、回复是否有信息量", "levels": [["10", "提问带video ID + 截图 + 自己的分析;回复精准", 5], ["8", "问题清晰,回复到位", 4], ["6", "基本清楚,偶尔要追问", 3], ["4", "泛泛提问,回复多是\"ok\"无上下文", 2], ["2", "表达不清,频繁误解", 1]]}, {"key": "Reliability", "zh": "可靠性", "def": "守deadline、守承诺", "levels": [["10", "基本提前完成,从未被催", 5], ["8", "按时交,偶尔紧贴deadline", 4], ["6", "偶尔需延期但会提前说", 3], ["4", "经常最后一刻求情延期", 2], ["2", "反复超时且不主动沟通", 1]]}, {"key": "Initiative", "zh": "主动性", "def": "主动推进 vs 等着被推", "levels": [["10", "主动要任务 + 主动报bug + 主动QA自己工作", 5], ["8", "主动报完成、主动问不清楚的地方", 4], ["6", "被动但响应及时", 3], ["4", "需PM催才动", 2], ["2", "完全被动", 1]]}, {"key": "Learning curve", "zh": "学习曲线", "def": "第2周是否还在问第1周的同样问题", "levels": [["10", "明显进步,被PM公开表扬", 5], ["8", "吸收新反馈,错误不重犯", 4], ["6", "稳定不退步", 3], ["4", "同类问题/错误反复", 2], ["2", "多次反馈后依旧", 1], ["n/a", "入职不足7天", 0]]}, {"key": "Attitude", "zh": "态度", "def": "对反馈的反应、情绪管理、团队氛围的贡献", "levels": [["10", "积极接受反馈,语气正面,主动感谢", 5], ["8", "接受反馈,态度专业", 4], ["6", "中性,机械应答但无负能量", 3], ["4", "偶尔防御性回应或抱怨", 2], ["2", "常态化负面/对抗", 1]]}];
+
+const DIMS = ["Productivity", "Quality", "Responsiveness", "Communication",
+              "Reliability", "Initiative", "Learning curve", "Attitude"];
+const DIM_ABBR = {
+  "Productivity": "Prod", "Quality": "Qual", "Responsiveness": "Resp",
+  "Communication": "Comm", "Reliability": "Rel", "Initiative": "Init",
+  "Learning curve": "Learn", "Attitude": "Att"
+};
+const riskOrder = { High: 0, Medium: 1, Low: 2, Unknown: 3 };
+
+function fillClass(v) { return 'fill-' + (v || 0); }
+function scoreClass(v) { return 's-' + (v || 0); }
+
+// Render 10 dots, score*2 dots filled with the score color
+function renderDots(v, dotSizeClass = '') {
+  const filled = v ? v * 2 : 0;
+  const fillCls = v ? fillClass(v) : '';
+  let out = '';
+  for (let i = 1; i <= 10; i++) {
+    const isFilled = i <= filled;
+    out += `<span class="dot${isFilled ? ' ' + fillCls : ''}"></span>`;
+  }
+  return out;
+}
+
+function renderCard(p) {
+  let dimsHtml = '';
+  DIMS.forEach(d => {
+    const v = p.scores[d];
+    const val10 = v !== null && v !== undefined ? (v * 2) : null;
+    const valDisp = val10 !== null
+      ? `<span class="dim-val">${val10}</span>`
+      : `<span class="dim-val na">n/a</span>`;
+    dimsHtml += `<div class="dim-row">
+      <span class="dim-name">${DIM_ABBR[d]}</span>
+      <span class="dim-dots">${renderDots(v)}</span>
+      ${valDisp}
+    </div>`;
+  });
+
+  const avg10 = p._avg10;
+  const avgDisp = avg10 !== null ? avg10.toFixed(1) : 'n/a';
+  const avgCls = p._avg ? scoreClass(Math.round(p._avg)) : 's-0';
+  const tenure = p._metrics.tenure_days || '?';
+  const msgs = p._metrics.freelancer_messages || 0;
+
+  return `
+    <div class="card" onclick='showDetail(${JSON.stringify(p.folder)})'>
+      <div class="card-head">
+        <div style="min-width:0;">
+          <div class="card-name">${p.display_name}</div>
+          <div class="card-label">${p.label}</div>
+        </div>
+        <span class="card-group">${p._group}</span>
+      </div>
+      <div class="card-body">
+        <div class="avg-circle ${avgCls}">
+          <div class="avg-val">${avgDisp}</div>
+          <div class="avg-unit">/ 10</div>
+        </div>
+        <div class="dims">${dimsHtml}</div>
+      </div>
+      <div class="chips">
+        <span class="chip chip-risk-${p.risk_level}">${p.risk_level}</span>
+        <span class="chip chip-tenure">${tenure} 天</span>
+        <span class="chip chip-tenure">${msgs} 条</span>
+      </div>
+    </div>
+  `;
+}
+
+function currentFiltered() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const g = document.getElementById('f-group').value;
+  const r = document.getElementById('f-risk').value;
+  const l = document.getElementById('f-label').value;
+  const sort = document.getElementById('sort').value;
+
+  let out = DATA.filter(p => {
+    if (g && p._group !== g) return false;
+    if (r && p.risk_level !== r) return false;
+    if (l && p.label !== l) return false;
+    if (q) {
+      const hay = (p.display_name + ' ' + p.label + ' ' + p.background + ' ' +
+        p.strengths.join(' ') + ' ' + p.concerns.join(' ') + ' ' +
+        p.recommendation + ' ' + p.comm_style).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if (sort === 'score-desc') out.sort((a,b) => (b._avg10 || 0) - (a._avg10 || 0));
+  else if (sort === 'score-asc') out.sort((a,b) => (a._avg10 || 99) - (b._avg10 || 99));
+  else if (sort === 'risk') out.sort((a,b) => (riskOrder[a.risk_level] - riskOrder[b.risk_level]) || ((b._avg10 || 0) - (a._avg10 || 0)));
+  else if (sort === 'name') out.sort((a,b) => a._first_name.localeCompare(b._first_name));
+
+  return out;
+}
+
+function render() {
+  const filtered = currentFiltered();
+  document.getElementById('grid').innerHTML = filtered.length
+    ? filtered.map(renderCard).join('')
+    : '<div class="empty" style="grid-column: 1/-1;">没有匹配的人员</div>';
+  document.getElementById('count').textContent = `显示 ${filtered.length} / ${DATA.length} 人`;
+}
+
+function showDetail(folder) {
+  const p = DATA.find(x => x.folder === folder);
+  if (!p) return;
+  document.getElementById('m-name').innerHTML = `${p.display_name} <span style="font-weight:400; font-size:16px; color:#64748b;">· ${p.label}</span>`;
+  document.getElementById('m-sub').innerHTML =
+    `${p.background} <span class="chip chip-risk-${p.risk_level}" style="margin-left:8px;">Risk: ${p.risk_level}</span>`;
+
+  const m = p._metrics;
+  let html = '';
+
+  html += `<div class="recommendation"><strong>建议:</strong> ${p.recommendation}</div>`;
+
+  html += `<div class="section-title">关键指标 (来自聊天记录)</div>`;
+  html += `<div class="metrics-grid">
+    <div class="metric"><div class="k">入职时长</div><div class="v">${m.tenure_days || '?'} 天</div></div>
+    <div class="metric"><div class="k">发出消息</div><div class="v">${m.freelancer_messages || 0}</div></div>
+    <div class="metric"><div class="k">活跃天数</div><div class="v">${m.freelancer_active_days || 0} (${Math.round((m.active_day_rate||0)*100)}%)</div></div>
+    <div class="metric"><div class="k">平均响应</div><div class="v">${m.avg_response_min || '—'} 分钟</div></div>
+    <div class="metric"><div class="k">≤30分响应率</div><div class="v">${m.fast_reply_pct !== undefined && m.fast_reply_pct !== null ? m.fast_reply_pct + '%' : '—'}</div></div>
+    <div class="metric"><div class="k">超2h回复</div><div class="v">${m.slow_reply_count_over_2h || 0}</div></div>
+    <div class="metric"><div class="k">提问次数</div><div class="v">${m.fl_questions_asked || 0}</div></div>
+    <div class="metric"><div class="k">附件数</div><div class="v">${m.fl_attachments || 0}</div></div>
+    <div class="metric"><div class="k">最活跃时段</div><div class="v">${m.most_active_hour !== null && m.most_active_hour !== undefined ? m.most_active_hour + ':00' : '—'}</div></div>
+  </div>`;
+
+  const avg10 = p._avg10 !== null ? p._avg10.toFixed(1) : 'n/a';
+  html += `<div class="section-title">评分 <span style="font-weight:400; color:#64748b; text-transform:none;">· 10分制 · 综合均分 <b style="color:#1e3a8a;">${avg10}/10</b> · <a href="#" onclick="openRubric(); return false;" style="color:#2563eb;">查看标准 →</a></span></div>`;
+  html += `<div class="score-grid">`;
+  DIMS.forEach(d => {
+    const v = p.scores[d];
+    const val10 = v !== null && v !== undefined ? (v * 2) : null;
+    const valHtml = val10 !== null
+      ? `<span class="${scoreClass(v)}" style="padding: 2px 7px; border-radius: 4px;">${val10}<span class="unit">/10</span></span>`
+      : `<span style="color:#94a3b8;">n/a</span>`;
+    html += `<div class="score-row">
+      <span class="name">${d}</span>
+      <span class="dots">${renderDots(v)}</span>
+      <span class="val">${valHtml}</span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="section-title" style="color: #059669;">优势</div>`;
+  html += `<ul class="bullets strengths">${p.strengths.map(s => `<li>${s}</li>`).join('')}</ul>`;
+
+  html += `<div class="section-title" style="color: #dc2626;">需关注</div>`;
+  html += `<ul class="bullets concerns">${p.concerns.map(s => `<li>${s}</li>`).join('')}</ul>`;
+
+  html += `<div class="section-title">学习曲线</div>`;
+  html += `<div class="narrative">${p.learning_curve}</div>`;
+
+  html += `<div class="section-title">沟通风格</div>`;
+  html += `<div class="narrative">${p.comm_style}</div>`;
+
+  html += `<div class="section-title">代表性对话</div>`;
+  p.quotes.forEach(q => {
+    html += `<div class="quote"><div class="ctx">${q[0]}</div><div class="text">"${q[1]}"</div></div>`;
+  });
+
+  document.getElementById('m-body').innerHTML = html;
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('modal').scrollTop = 0;
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+function openRubric() {
+  const body = document.getElementById('rubric-body');
+  if (!body.dataset.rendered) {
+    let html = '';
+    RUBRIC.forEach(section => {
+      html += `<div class="rubric-section">
+        <div class="rubric-title">${section.key} (${section.zh})</div>
+        <div class="rubric-def">${section.def}</div>
+        <div class="rubric-levels">`;
+      section.levels.forEach(([score, desc, raw]) => {
+        const scoreCls = raw > 0 ? `s-${raw}` : 's-0';
+        html += `<div class="rubric-level">
+          <span class="score-chip ${scoreCls}">${score}</span>
+          <span class="desc">${desc}</span>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+    body.innerHTML = html;
+    body.dataset.rendered = '1';
+  }
+  document.getElementById('rubric-overlay').classList.add('open');
+}
+function closeRubric() { document.getElementById('rubric-overlay').classList.remove('open'); }
+
+document.getElementById('overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'overlay') closeModal();
+});
+document.getElementById('rubric-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'rubric-overlay') closeRubric();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeModal(); closeRubric(); }
+});
+
+['search', 'f-group', 'f-risk', 'f-label', 'sort'].forEach(id => {
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+
+render();
+</script>
+</body>
+</html>
